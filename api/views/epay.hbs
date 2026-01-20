@@ -1,0 +1,44 @@
+<html>
+
+<head>
+  <meta charset='utf-8' />
+  <title>Subscribe for membership</title>
+  <script src='https://epay.homebank.kz/payform/payment-api.js'>
+  </script>
+</head>
+
+<body>
+  <script>
+    var paymentObject;
+    window.addEventListener('load', function () {
+      paymentObject = {
+        invoiceId: `{{invoiceID}}`,
+        //invoiceIdAlt:"{{invoiceID}}hjkhjk",
+        backLink: "https://api.steppecoffee.kz/pay/save-card/completed",
+        failureBackLink: "https://api.steppecoffee.kz/pay/save-card/completed?error=true",
+        postLink: "https://api.steppecoffee.kz/pay/save-card/success",
+        failurePostLink: "https://api.steppecoffee.kz/pay/error",
+        language: "rus",
+        description: "{{description}}",
+        accountId: "{{user.id}}",
+        terminal: "{{terminal}}",
+        amount: {{amount}},
+        data: "{\"statement\":{\"name\":\"{{user.name}} {{user.surName}}\",\"invoiceID\":\"{{invoiceID}}\"}}",
+        currency: "{{currency}}",
+        phone: "{{phone}}",
+        name:"{{user.name}} {{user.surName}}",
+        email: "example@example.com",
+        cardSave: {{cardSave}}, 
+        paymentType: "{{paymentType}}"
+      };
+
+      paymentObject.auth = JSON.parse(`{{{token}}}`);
+
+      halyk.pay(paymentObject);
+      //halyk.showPaymentWidget(paymentObject);
+    }); 
+
+  </script>
+</body>
+
+</html>

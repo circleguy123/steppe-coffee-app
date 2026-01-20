@@ -1,0 +1,4 @@
+﻿База данных
+http://steppecoffee.kz:9000/
+Мастер-пароль
+t4IntedKIdN3Y~668

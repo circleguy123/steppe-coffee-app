@@ -1,0 +1,31 @@
+export const ORGANIZATION_ID = '390df300-2520-4594-a7da-f4d87d2ea84a';
+export const TERMINAL_GROUP_ID = 'b1515b88-4106-431a-9114-ba9bfe971b8e';
+export const PROGRAM_ID = 'f8990000-6beb-ac1f-8aa2-08dd0eda063b';
+export const EXTERNAL_MENU_ID = '38004';
+export const REWARD_MENU_ID = '38455';
+export const API_LOGIN = 'ce1bb5314a694a17b482406e7b6a57ea';
+export const PAYMENT_TYPE_ID = '09322f46-578a-d210-add7-eec222a08871';
+
+export const APP_PAYMENT_TYPE_ID = 'ddbe19b4-f94b-406e-91c3-60b19b81aca0';
+export const BONUS_PAYMENT_TYPE_ID = '9f8137fd-f618-4a8e-b7c2-6435cf83f8eb';
+
+export const ORDER_TYPE_ID = 'bbbef4dc-5a02-7ea3-81d3-826f4e8bb3e0';
+
+export const MEMBERSHIP_MENU_ID = '38706';
+
+export const MEMBERSHIP_CATEGORY_ID = '8cd10d1e-abba-4353-a04d-9f0529e7ad37';
+
+export default {
+  ORGANIZATION_ID,
+  TERMINAL_GROUP_ID,
+  PROGRAM_ID,
+  EXTERNAL_MENU_ID,
+  REWARD_MENU_ID,
+  API_LOGIN,
+  PAYMENT_TYPE_ID,
+  ORDER_TYPE_ID,
+  APP_PAYMENT_TYPE_ID,
+  BONUS_PAYMENT_TYPE_ID,
+  MEMBERSHIP_MENU_ID,
+  MEMBERSHIP_CATEGORY_ID,
+};

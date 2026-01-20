@@ -1,0 +1,235 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(uuid())
+  phone             String    @unique
+  name              String
+  surName           String?
+  loginCode         String?
+  verificationId    String?
+  loginCodeIssuedAt DateTime  @default(now())
+  loyaltyAccounts   LoyaltyAccount[]
+  iikoId            String?
+  birthDate         DateTime?
+
+  favoriteDrink     String?
+
+  orders            UserOrder[]
+
+  eventRsvp         EventRsvp[]
+
+  paymentCards      EpayUserCard[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt  @default(now())
+  deletedAt         DateTime?
+}
+
+model Device {
+  id                String     @id @default(uuid())
+  userId            String?
+  loyaltyAccounts   LoyaltyAccount[]
+}
+
+model LoyaltyAccount {
+  id                String    @id  @default(uuid())
+  userId            String?
+  deviceId          String?
+  balance           Int
+  cardId            String
+
+  user              User? @relation(fields: [userId], references: [id])
+  device            Device? @relation(fields: [deviceId], references: [id])
+}
+
+model UserOrder {
+  id                String    @id @default(uuid())
+  total             Int
+  userId            String
+  user              User @relation(fields: [userId], references: [id])
+  iikoStatus        String
+  paymentStatus     String
+
+  organizationId    String
+  terminalGroupId   String
+  menuId            String
+
+  iikoOrderId       String?
+  orderNumber       Int @default(autoincrement())
+
+  userOrderItem     UserOrderItem[]
+
+  type              UserOrderType @default(Takeaway)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt  @default(now())
+}
+
+enum UserOrderType {
+  Takeaway
+  Delivery
+  Reward
+}
+
+model UserOrderItem {
+  id                String    @id @default(uuid())
+  productId         String
+  productName       String?
+  amount            Int
+  price             Float
+  productSizeId     String?
+  userOrderId       String
+  
+  userOrder         UserOrder @relation(fields: [userOrderId], references: [id])
+}
+
+model IikoTerminal {
+  id                String    @id @default(uuid())
+  terminalGroupId   String
+  organizationId    String
+  name              String
+  timeZone          String
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// model UserOrderItemModifier {}
+
+
+model Event {
+  id                String    @id @default(uuid())
+  title             String
+  description       String
+  eventDate         DateTime
+  eventLength       String
+  ticketsNumber     Int
+  photoUrl          String?
+  price             Int
+  location          String?
+  eventUrl          String?
+  isArchived        Boolean @default(false)
+
+  eventRsvp         EventRsvp[]
+}
+
+model EventRsvp {
+  id                String    @id @default(uuid())
+  userId            String
+  eventId           String
+  reservedAt        DateTime  @default(now())
+
+  user              User      @relation(fields: [userId], references: [id])
+  event             Event     @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+model Membership {
+  id                String @id @default(uuid())
+  userId            String
+  activatedAt       DateTime?
+  expiresAt         DateTime?
+  status            String? @default("idle") // idle, active, canceled, expired, failed
+  productId         String?
+  total             Float?
+  cardId            String?
+
+  createdAt         DateTime @default(now())
+  
+  @@index([expiresAt, status])
+}
+
+enum EpayOrderType {
+  Membership
+  UserOrder
+  SaveCard
+}
+
+enum EpayOrderStatus {
+  pending
+  new
+  paid
+  failed
+  canceled
+}
+
+model EpayOrderInvoice {
+  id                Int       @id @default(autoincrement())
+  userOrderId       String?
+  membershipId      String?
+  type              EpayOrderType 
+  userId            String
+
+  createdAt         DateTime  @default(now())
+  paidAt            DateTime?
+
+  userCard          EpayUserCard[]
+
+  status            EpayOrderStatus @default(new)
+}
+
+model EpayUserCard {
+  id                String   @id @default(uuid())
+  cardId            String   // Card ID from the acquiring service
+  cardMask          String   // Masked card number, e.g., 440043...2222
+  cardType          String   // Card type, e.g., VISA
+  approvalCode      String?  // Approval code for the transaction
+  amount            Float    // Transaction amount
+  currency          String   // Currency of the transaction, e.g., KZT
+  dateTime          DateTime // Timestamp of the transaction
+  description       String?  // Description from the acquiring service
+  ip                String?  // IP address of the user
+  ipCity            String?  // City of the IP address
+  ipCountry         String?  // Country of the IP address
+  ipDistrict        String?  // District of the IP address
+  ipLatitude        Float?   // Latitude of the IP address
+  ipLongitude       Float?   // Longitude of the IP address
+  ipRegion          String?  // Region of the IP address
+  issuer            String?  // Issuer bank name
+  language          String?  // Language of the transaction
+  name              String?  // Cardholder's name
+  phone             String?  // Phone number
+  reason            String?  // Reason for transaction status
+  reasonCode        Int?     // Reason code for transaction status
+  reference         String?  // Reference for the transaction
+  secure            String?  // Secure status (e.g., "yes", "no")
+  secureDetails     String?  // Secure details (e.g., "F")
+  terminal          String?  // Terminal ID used for the transaction
+
+  allData           Json
+
+  accountId         String   // Relation field for User
+  user              User     @relation(fields: [accountId], references: [id]) // Relation to User model
+
+  invoiceId         Int      // Relation field for EpayOrderInvoice
+  epayOrderInvoice  EpayOrderInvoice @relation(fields: [invoiceId], references: [id]) // Relation to EpayOrderInvoice
+
+  createdAt         DateTime @default(now()) // Timestamp for record creation
+  updatedAt         DateTime @updatedAt      // Timestamp for record update
+  deletedAt         DateTime?
+
+  @@unique([accountId, cardId])
+}
+
+model EpayOrderError {
+  id                String  @id @default(uuid()) // Unique identifier for the error
+  
+  errorData         Json
+
+  createdAt         DateTime @default(now()) // Timestamp for record creation
+  updatedAt         DateTime @updatedAt      // Timestamp for record update
+}

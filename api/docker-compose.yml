@@ -1,0 +1,64 @@
+version: '3.9'
+services:
+  steppe_api:
+    image: ghcr.io/steppe-coffee/steppe-coffee-api:latest
+    container_name: steppe_api
+    networks:
+      - node-network
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: 'postgresql://steppe_user:magg0tyh0TD0g655@db:5432/steppe_db'
+      JWT_SECRET: 'wI1dkIDnEY888'
+      JWT_EXPIRES_IN: '365d'
+      REDIS_URL: 'redis://redis:6379' # Add Redis connection URL
+    depends_on:
+      - db
+      - redis # Ensure Redis is started before the API
+    restart: always
+
+  steppe_migrations:
+    image: ghcr.io/steppe-coffee/steppe-coffee-api:latest
+    environment:
+      DATABASE_URL: 'postgresql://steppe_user:magg0tyh0TD0g655@db:5432/steppe_db'
+    networks:
+      - node-network
+    depends_on:
+      - db
+    command: npx prisma migrate deploy && npx prisma db seed --preview-feature
+
+  db:
+    image: postgres:15-alpine
+    container_name: steppe_db
+    ports:
+      - '5432:5432'
+    networks:
+      - node-network
+    environment:
+      POSTGRES_USER: steppe_user
+      POSTGRES_PASSWORD: magg0tyh0TD0g655
+      POSTGRES_DB: steppe_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U steppe_user -d steppe_db']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  redis:
+    image: redis:alpine
+    container_name: steppe_redis
+    ports:
+      - '6379:6379'
+    networks:
+      - node-network
+    restart: always
+
+volumes:
+  postgres_data:
+
+networks:
+  node-network:
+    driver: bridge
