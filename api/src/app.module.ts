@@ -16,6 +16,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { redisStore } from 'cache-manager-redis-yet';
 import { GraphQLBigInt } from 'graphql-scalars';
 import { MembershipModule } from './membership/membership.module';
+import { CommunityModule } from './community/community.module';
 
 const jwtFactory = {
   global: true,
@@ -59,6 +60,7 @@ const jwtFactory = {
     EventsModule,
     EpayModule,
     MembershipModule,
+    CommunityModule,
   ],
 })
 export class AppModule {}
