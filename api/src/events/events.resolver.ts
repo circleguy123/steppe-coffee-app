@@ -36,6 +36,16 @@ export class EventsResolver {
   ): Promise<EventOutput[]> {
     return this.eventsService.getAllEventsWithRsvps(req.user.id);
   }
+  @Query(() => EventOutput, {
+    name: 'event',
+    description: 'Fetch a single event by ID.',
+  })
+  async getEvent(
+    @Args('id') id: string,
+    @Context('req') req: { user: JwtPayload },
+  ): Promise<EventOutput> {
+    return this.eventsService.getEventById(id, req.user.id);
+  }
 
   @Mutation(() => EventOutput, {
     name: 'rsvpToEvent',

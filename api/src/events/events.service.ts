@@ -24,18 +24,36 @@ export class EventsService {
         isArchived: false,
       },
       include: {
-        eventRsvp: true, // Include RSVPs for each event
+        eventRsvp: true,
       },
     });
     return events.map(({ eventRsvp, ...eventData }) => {
       return {
         ...eventData,
         hasRegistered:
-          eventRsvp.find(({ userId }) => sessionUserId === userId) !==
-          undefined,
+          eventRsvp.find(({ userId }) => sessionUserId === userId) !== undefined,
         ticketsLeft: eventData.ticketsNumber - eventRsvp.length,
       };
     }) as EventOutput[];
+  }
+
+  async getEventById(id: string, sessionUserId: string): Promise<EventOutput> {
+    const event = await this.prisma.event.findUnique({
+      where: { id },
+      include: {
+        eventRsvp: true,
+      },
+    });
+
+    if (!event) {
+      throw new NotFoundException(`Event with ID ${id} not found`);
+    }
+
+    return {
+      ...event,
+      hasRegistered: event.eventRsvp.some(rsvp => rsvp.userId === sessionUserId),
+      ticketsLeft: event.ticketsNumber - event.eventRsvp.length,
+    };
   }
 
   async createRsvp(userId, input: CreateEventRsvpInput): Promise<EventOutput> {
@@ -56,7 +74,7 @@ export class EventsService {
       },
     });
     if (existingRsvp) {
-      throw new BadRequestException('You have already RSVP’d to this event');
+      throw new BadRequestException('You have already RSVPd to this event');
     }
 
     // Ensure there are tickets available
