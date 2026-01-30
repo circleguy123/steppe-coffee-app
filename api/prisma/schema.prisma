@@ -15,6 +15,10 @@ model User {
   birthDate            DateTime?
   role                 String             @default("user")
   password             String?
+  loginCode            String?
+  loginCodeIssuedAt    DateTime?
+  iikoId               String?
+  deletedAt            DateTime?
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
   eventRsvps           EventRsvp[]
