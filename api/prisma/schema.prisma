@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,28 +8,22 @@ datasource db {
 }
 
 model User {
-  id                String    @id @default(uuid())
-  phone             String    @unique
-  name              String
-  surName           String?
-  loginCode         String?
-  verificationId    String?
-  loginCodeIssuedAt DateTime  @default(now())
-  loyaltyAccounts   LoyaltyAccount[]
-  iikoId            String?
-  birthDate         DateTime?
-
-  favoriteDrink     String?
-
-  orders            UserOrder[]
-
-  eventRsvp         EventRsvp[]
-
-  paymentCards      EpayUserCard[]
-
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt  @default(now())
-  deletedAt         DateTime?
+  id                   String             @id @default(uuid())
+  phone                String             @unique
+  name                 String?
+  surName              String?
+  birthDate            DateTime?
+  role                 String             @default("user")
+  password             String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  eventRsvps           EventRsvp[]
+  paymentCards         EpayUserCard[]
+  orders               UserOrder[]
+  communities          Community[]
+  communityMemberships CommunityMember[]
+  tableBookings        TableBooking[]
+  loyaltyAccounts      LoyaltyAccount[]
 }
 
 model Device {
@@ -107,9 +95,6 @@ model IikoTerminal {
   updatedAt         DateTime @updatedAt
 }
 
-// model UserOrderItemModifier {}
-
-
 model Event {
   id                String    @id @default(uuid())
   title             String
@@ -143,7 +128,7 @@ model Membership {
   userId            String
   activatedAt       DateTime?
   expiresAt         DateTime?
-  status            String? @default("idle") // idle, active, canceled, expired, failed
+  status            String? @default("idle")
   productId         String?
   total             Float?
   cardId            String?
@@ -184,52 +169,109 @@ model EpayOrderInvoice {
 
 model EpayUserCard {
   id                String   @id @default(uuid())
-  cardId            String   // Card ID from the acquiring service
-  cardMask          String   // Masked card number, e.g., 440043...2222
-  cardType          String   // Card type, e.g., VISA
-  approvalCode      String?  // Approval code for the transaction
-  amount            Float    // Transaction amount
-  currency          String   // Currency of the transaction, e.g., KZT
-  dateTime          DateTime // Timestamp of the transaction
-  description       String?  // Description from the acquiring service
-  ip                String?  // IP address of the user
-  ipCity            String?  // City of the IP address
-  ipCountry         String?  // Country of the IP address
-  ipDistrict        String?  // District of the IP address
-  ipLatitude        Float?   // Latitude of the IP address
-  ipLongitude       Float?   // Longitude of the IP address
-  ipRegion          String?  // Region of the IP address
-  issuer            String?  // Issuer bank name
-  language          String?  // Language of the transaction
-  name              String?  // Cardholder's name
-  phone             String?  // Phone number
-  reason            String?  // Reason for transaction status
-  reasonCode        Int?     // Reason code for transaction status
-  reference         String?  // Reference for the transaction
-  secure            String?  // Secure status (e.g., "yes", "no")
-  secureDetails     String?  // Secure details (e.g., "F")
-  terminal          String?  // Terminal ID used for the transaction
+  cardId            String
+  cardMask          String
+  cardType          String
+  approvalCode      String?
+  amount            Float
+  currency          String
+  dateTime          DateTime
+  description       String?
+  ip                String?
+  ipCity            String?
+  ipCountry         String?
+  ipDistrict        String?
+  ipLatitude        Float?
+  ipLongitude       Float?
+  ipRegion          String?
+  issuer            String?
+  language          String?
+  name              String?
+  phone             String?
+  reason            String?
+  reasonCode        Int?
+  reference         String?
+  secure            String?
+  secureDetails     String?
+  terminal          String?
 
   allData           Json
 
-  accountId         String   // Relation field for User
-  user              User     @relation(fields: [accountId], references: [id]) // Relation to User model
+  accountId         String
+  user              User     @relation(fields: [accountId], references: [id])
 
-  invoiceId         Int      // Relation field for EpayOrderInvoice
-  epayOrderInvoice  EpayOrderInvoice @relation(fields: [invoiceId], references: [id]) // Relation to EpayOrderInvoice
+  invoiceId         Int
+  epayOrderInvoice  EpayOrderInvoice @relation(fields: [invoiceId], references: [id])
 
-  createdAt         DateTime @default(now()) // Timestamp for record creation
-  updatedAt         DateTime @updatedAt      // Timestamp for record update
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
   deletedAt         DateTime?
 
   @@unique([accountId, cardId])
 }
 
 model EpayOrderError {
-  id                String  @id @default(uuid()) // Unique identifier for the error
-  
+  id                String  @id @default(uuid())
   errorData         Json
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
 
-  createdAt         DateTime @default(now()) // Timestamp for record creation
-  updatedAt         DateTime @updatedAt      // Timestamp for record update
+model Community {
+  id          String            @id @default(uuid())
+  name        String
+  description String?
+  imageUrl    String?
+  isPublic    Boolean           @default(true)
+  createdById String
+  createdBy   User              @relation(fields: [createdById], references: [id])
+  members     CommunityMember[]
+  events      CommunityEvent[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model CommunityMember {
+  id          String    @id @default(uuid())
+  communityId String
+  userId      String
+  role        String    @default("member")
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id])
+  joinedAt    DateTime  @default(now())
+
+  @@unique([communityId, userId])
+}
+
+model CommunityEvent {
+  id           String         @id @default(uuid())
+  communityId  String?
+  title        String
+  description  String?
+  imageUrl     String?
+  eventDate    DateTime
+  eventLength  String?
+  location     String?
+  maxAttendees Int?
+  price        Int            @default(0)
+  community    Community?     @relation(fields: [communityId], references: [id])
+  bookings     TableBooking[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model TableBooking {
+  id          String          @id @default(uuid())
+  userId      String
+  eventId     String?
+  tableNumber String?
+  date        DateTime
+  timeSlot    String?
+  partySize   Int             @default(1)
+  status      String          @default("pending")
+  notes       String?
+  user        User            @relation(fields: [userId], references: [id])
+  event       CommunityEvent? @relation(fields: [eventId], references: [id])
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 }
