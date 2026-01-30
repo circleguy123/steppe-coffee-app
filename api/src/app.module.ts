@@ -17,6 +17,7 @@ import { redisStore } from 'cache-manager-redis-yet';
 import { GraphQLBigInt } from 'graphql-scalars';
 import { MembershipModule } from './membership/membership.module';
 import { CommunityModule } from './community/community.module';
+import { AdminModule } from './admin/admin.module';
 
 const jwtFactory = {
   global: true,
@@ -61,6 +62,7 @@ const jwtFactory = {
     EpayModule,
     MembershipModule,
     CommunityModule,
+    AdminModule,
   ],
 })
 export class AppModule {}
