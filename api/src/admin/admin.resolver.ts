@@ -1,4 +1,4 @@
-import { Resolver, Query, ObjectType, Field, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ObjectType, Field, Int, InputType } from '@nestjs/graphql';
 import { AdminService } from './admin.service';
 
 @ObjectType()
@@ -62,6 +62,9 @@ class AdminUser {
 
   @Field({ nullable: true })
   createdAt?: Date;
+
+  @Field()
+  role: string;
 }
 
 @ObjectType()
@@ -91,6 +94,108 @@ class AdminBooking {
   user?: AdminUser;
 }
 
+@ObjectType()
+class BaristaLoginResult {
+  @Field()
+  success: boolean;
+
+  @Field({ nullable: true })
+  token?: string;
+
+  @Field({ nullable: true })
+  message?: string;
+
+  @Field(() => AdminUser, { nullable: true })
+  user?: AdminUser;
+}
+
+@ObjectType()
+class Announcement {
+  @Field()
+  id: string;
+
+  @Field()
+  title: string;
+
+  @Field()
+  message: string;
+
+  @Field()
+  type: string;
+
+  @Field({ nullable: true })
+  imageUrl?: string;
+
+  @Field({ nullable: true })
+  linkUrl?: string;
+
+  @Field()
+  isActive: boolean;
+
+  @Field({ nullable: true })
+  expiresAt?: Date;
+
+  @Field()
+  createdAt: Date;
+}
+
+@InputType()
+class CreateBaristaInput {
+  @Field()
+  phone: string;
+
+  @Field()
+  name: string;
+
+  @Field()
+  password: string;
+}
+
+@InputType()
+class CreateAnnouncementInput {
+  @Field()
+  title: string;
+
+  @Field()
+  message: string;
+
+  @Field({ nullable: true })
+  type?: string;
+
+  @Field({ nullable: true })
+  imageUrl?: string;
+
+  @Field({ nullable: true })
+  linkUrl?: string;
+
+  @Field({ nullable: true })
+  expiresAt?: Date;
+}
+
+@InputType()
+class UpdateAnnouncementInput {
+  @Field({ nullable: true })
+  title?: string;
+
+  @Field({ nullable: true })
+  message?: string;
+
+  @Field({ nullable: true })
+  type?: string;
+
+  @Field({ nullable: true })
+  imageUrl?: string;
+
+  @Field({ nullable: true })
+  linkUrl?: string;
+
+  @Field({ nullable: true })
+  isActive?: boolean;
+
+  @Field({ nullable: true })
+  expiresAt?: Date;
+}
+
 @Resolver()
 export class AdminResolver {
   constructor(private adminService: AdminService) {}
@@ -113,5 +218,63 @@ export class AdminResolver {
   @Query(() => [AdminUser], { name: 'adminUsers' })
   async getAdminUsers() {
     return this.adminService.getUsers();
+  }
+
+  @Query(() => [AdminUser], { name: 'adminBaristas' })
+  async getAdminBaristas() {
+    return this.adminService.getBaristas();
+  }
+
+  // Announcements - public query for app
+  @Query(() => [Announcement], { name: 'announcements' })
+  async getAnnouncements() {
+    return this.adminService.getAnnouncements();
+  }
+
+  // Announcements - admin query (includes inactive)
+  @Query(() => [Announcement], { name: 'adminAnnouncements' })
+  async getAdminAnnouncements() {
+    return this.adminService.getAllAnnouncements();
+  }
+
+  @Mutation(() => AdminUser, { name: 'createBarista' })
+  async createBarista(@Args('input') input: CreateBaristaInput) {
+    return this.adminService.createBarista(input.phone, input.name, input.password);
+  }
+
+  @Mutation(() => Boolean, { name: 'deleteBarista' })
+  async deleteBarista(@Args('id') id: string) {
+    return this.adminService.deleteBarista(id);
+  }
+
+  @Mutation(() => BaristaLoginResult, { name: 'baristaLogin' })
+  async baristaLogin(
+    @Args('phone') phone: string,
+    @Args('password') password: string,
+  ) {
+    return this.adminService.baristaLogin(phone, password);
+  }
+
+  @Mutation(() => Announcement, { name: 'createAnnouncement' })
+  async createAnnouncement(@Args('input') input: CreateAnnouncementInput) {
+    return this.adminService.createAnnouncement(
+      input.title,
+      input.message,
+      input.type || 'info',
+      input.expiresAt,
+    );
+  }
+
+  @Mutation(() => Announcement, { name: 'updateAnnouncement' })
+  async updateAnnouncement(
+    @Args('id') id: string,
+    @Args('input') input: UpdateAnnouncementInput,
+  ) {
+    return this.adminService.updateAnnouncement(id, input);
+  }
+
+  @Mutation(() => Boolean, { name: 'deleteAnnouncement' })
+  async deleteAnnouncement(@Args('id') id: string) {
+    return this.adminService.deleteAnnouncement(id);
   }
 }
