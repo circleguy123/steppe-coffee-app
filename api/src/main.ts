@@ -10,7 +10,8 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://admin.steppecoffee.kz'],
+    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://admin.steppecoffee.kz', 'https://steppe-coffee.web.app',
+    'https://steppe-coffee.firebaseapp.com'],
     credentials: true,
   });
   
