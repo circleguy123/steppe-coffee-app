@@ -5,21 +5,21 @@ import { UrlImage } from "@/src/components/UrlImage";
 import { TouchableOpacity, View } from "react-native";
 import { format } from "date-fns";
 import { Colors } from "@/constants/Colors";
-import { openBrowserAsync } from "expo-web-browser";
+import { useRouter } from "expo-router";
+
 export interface EventListItemProps {
   event: EventOutput;
   onPress?: () => void;
 }
 
 export const EventListItem: React.FC<EventListItemProps> = ({ event }) => {
+  const router = useRouter();
+
   return (
     <TouchableOpacity
       style={{ borderRadius: 8, backgroundColor: "#FFF" }}
-      onPress={async () => {
-        console.log(event);
-        if (event.eventUrl) {
-          await openBrowserAsync(event.eventUrl);
-        }
+      onPress={() => {
+        router.push(`/(app)/(tabs)/events/${event.id}`);
       }}
     >
       <UrlImage

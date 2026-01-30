@@ -42,6 +42,11 @@ export default function TabTwoScreen() {
         icon: "shoppingcart",
       },
       {
+        title: "Table Bookings",
+        onPress: () => router.push("/(app)/(tabs)/profile/my-bookings"),
+        icon: "calendar",
+      },
+      {
         title: "Membership",
         onPress: () => router.push("/(app)/(tabs)/profile/membership"),
         icon: "staro",

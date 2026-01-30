@@ -55,7 +55,7 @@ export function ItemModifierCard({
         borderRadius: 8,
         borderWidth: 1,
         borderColor: quantity > 0 ? Colors.green : "#E0E0E0",
-        padding: 12,
+        padding: 8,
         opacity: disabled ? 0.5 : 1,
         flexDirection: "row",
         alignItems: "center",

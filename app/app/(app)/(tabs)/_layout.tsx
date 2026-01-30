@@ -24,6 +24,7 @@ export default function TabLayout() {
           borderTopLeftRadius: 14,
           borderTopRightRadius: 14,
           paddingBottom: 16,
+          justifyContent: "space-around",
           shadowOffset: {
             height: 10,
             width: 0,
@@ -37,7 +38,7 @@ export default function TabLayout() {
           name="index"
           href="/"
           style={{
-            padding: 12,
+            padding: 4,
           }}
         >
           <TabButton icon="home" />
@@ -46,7 +47,7 @@ export default function TabLayout() {
           name="menu"
           href="/menu"
           style={{
-            padding: 12,
+            padding: 4,
           }}
         >
           <TabButton icon="appstore-o" />
@@ -55,10 +56,19 @@ export default function TabLayout() {
         {session ? (
           <>
             <TabTrigger
+              name="community"
+              href="/(app)/(tabs)/community"
+              style={{
+                padding: 4,
+              }}
+            >
+              <TabButton icon="team" />
+            </TabTrigger>
+            <TabTrigger
               name="events"
               href="/(app)/(tabs)/events"
               style={{
-                padding: 12,
+                padding: 4,
               }}
             >
               <TabButton icon="calendar" />
@@ -68,7 +78,7 @@ export default function TabLayout() {
               href="/(app)/(tabs)/profile"
               reset="always"
               style={{
-                padding: 12,
+                padding: 4,
               }}
             >
               <TabButton icon="user" />
@@ -76,10 +86,10 @@ export default function TabLayout() {
           </>
         ) : (
           <>
-            <Link href="/(app)/register" style={{ padding: 12 }}>
+            <Link href="/(app)/register" style={{ padding: 4 }}>
               <TabButton icon="calendar" />
             </Link>
-            <Link href="/(app)/register" style={{ padding: 12 }}>
+            <Link href="/(app)/register" style={{ padding: 4 }}>
               <TabButton icon="user" />
             </Link>
           </>

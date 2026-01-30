@@ -44,7 +44,7 @@ export function ItemSizeCard({
           borderRadius: 8,
           borderWidth: 2,
           borderColor: isSelected ? Colors.green : "#E0E0E0",
-          padding: 12,
+          padding: 8,
           alignItems: "center",
           minWidth: 120,
         },

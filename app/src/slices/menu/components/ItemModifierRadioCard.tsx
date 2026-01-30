@@ -47,7 +47,7 @@ export function ItemModifierRadioCard({
           borderRadius: 8,
           borderWidth: 2,
           borderColor: isSelected ? Colors.green : "#E0E0E0",
-          padding: 12,
+          padding: 8,
           opacity: disabled ? 0.5 : pressed ? 0.8 : 1,
           flexDirection: "row",
           alignItems: "center",
