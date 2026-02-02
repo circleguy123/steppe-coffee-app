@@ -61,6 +61,9 @@
     "seeAll": "Барлығын көру",
     "todayEvents": "Бүгінгі оқиғалар",
     "upcomingEvents": "Алдағы оқиғалар"
+    "guest": "Қонақ",
+    "chooseReward": "СЫЙЛЫҒЫҢЫЗДЫ ТАҢДАҢЫЗ",
+    "pointsMessage": "Сізде қанша ұпай барын қараңыз!"  
   },
   "menu": {
     "title": "Мәзір",

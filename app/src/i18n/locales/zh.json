@@ -61,6 +61,9 @@
     "seeAll": "查看全部",
     "todayEvents": "今日活动",
     "upcomingEvents": "即将举行的活动"
+    "guest": "访客",
+    "chooseReward": "选择您的奖励",
+    "pointsMessage": "看看您有多少积分！"
   },
   "menu": {
     "title": "菜单",

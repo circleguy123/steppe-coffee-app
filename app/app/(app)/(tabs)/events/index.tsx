@@ -9,9 +9,11 @@ import { useRef } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { SteppeText } from "@/src/components/SteppeText";
 import { Colors } from "@/constants/Colors";
+import { useTranslation } from "react-i18next";
 
 export default function EventListDisplay() {
   const scrollOffsetY = useRef(new Animated.Value(0)).current;
+  const { t } = useTranslation();
   const eventsQuery = useQuery<EventsQuery>(GET_EVENTS_QUERY);
 
   return (
@@ -24,7 +26,7 @@ export default function EventListDisplay() {
       </SaigakHeader>
       <View style={{ flex: 1 }}>
         <SteppeTitle style={{ fontSize: 32, padding: 16, paddingBottom: 0 }}>
-          Events
+          {t('events.title')}
         </SteppeTitle>
 
         <EventList

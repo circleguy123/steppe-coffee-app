@@ -61,6 +61,9 @@
     "seeAll": "See all",
     "todayEvents": "Today's Events",
     "upcomingEvents": "Upcoming Events"
+    "guest": "Guest",
+    "chooseReward": "CHOOSE YOUR REWARD",
+    "pointsMessage": "Look how many points you have!"
   },
   "menu": {
     "title": "Menu",

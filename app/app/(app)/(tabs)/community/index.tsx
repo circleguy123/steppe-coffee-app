@@ -3,6 +3,7 @@ import { useQuery } from "@apollo/client";
 import { useRef } from "react";
 import { useRouter } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { SaigakHeader } from "@/src/components/SaigakHeader";
 import { SteppeTitle } from "@/src/components/SteppeTitle";
 import { SteppeText } from "@/src/components/SteppeText";
@@ -13,6 +14,7 @@ import { Colors } from "@/constants/Colors";
 export default function CommunitiesScreen() {
   const scrollOffsetY = useRef(new Animated.Value(0)).current;
   const router = useRouter();
+  const { t } = useTranslation();
   const { data, loading, refetch } = useQuery(GET_COMMUNITIES_QUERY);
 
   return (
@@ -20,13 +22,13 @@ export default function CommunitiesScreen() {
       <SaigakHeader animHeaderValue={scrollOffsetY}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
           <AntDesign name="team" color={Colors.green} size={20} />
-          <SteppeText style={{ fontSize: 16 }}>Communities</SteppeText>
+          <SteppeText style={{ fontSize: 16 }}>{t('communities.title')}</SteppeText>
         </View>
       </SaigakHeader>
       
       <View style={{ flex: 1 }}>
         <View style={styles.header}>
-          <SteppeTitle style={{ fontSize: 32 }}>Communities</SteppeTitle>
+          <SteppeTitle style={{ fontSize: 32 }}>{t('communities.title')}</SteppeTitle>
           <TouchableOpacity
             style={styles.createButton}
             onPress={() => router.push("/(app)/(tabs)/community/create")}

@@ -17,11 +17,13 @@ import { REWARD_MENU_QUERY } from "@/src/slices/menu/menu.gql";
 import SteppeLoading from "@/src/components/SteppeLoading";
 import { useRewardsContext } from "@/src/slices/loyalty/context/rewards.context";
 import { useSession } from "@/context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function Index() {
   const scrollOffsetY = useRef(new Animated.Value(0)).current;
   const { setRewards } = useRewardsContext();
   const { session } = useSession();
+  const { t } = useTranslation();
 
   const profileQuery = useQuery(PROFILE_QUERY, {
     onError: (error) => {
@@ -76,7 +78,7 @@ export default function Index() {
         <LoyaltyCard
           tier={hasMembership ? LoyaltyTiers.paid : LoyaltyTiers.free}
           cardNumber={loyaltyQuery.data?.loyaltyUser?.cards[0]?.number}
-          name={profileQuery.data?.profile?.name ?? "Guest"}
+          name={profileQuery.data?.profile?.name ?? t('home.guest') || "Guest"}
           cashback={5}
           points={
             loyaltyQuery.data?.loyaltyUser?.walletBalances[0].balance ?? 0
@@ -94,11 +96,11 @@ export default function Index() {
               fontWeight: "bold",
             }}
           >
-            CHOOSE YOUR REWARD
+            {t('home.chooseReward') || "CHOOSE YOUR REWARD"}
           </SteppeText>
 
           <SteppeText style={{}}>
-            Look how much points you got there!
+            {t('home.pointsMessage') || "Look how much points you got there!"}
           </SteppeText>
         </View>
 
