@@ -41,6 +41,8 @@
     "welcomeBack": "欢迎回来",
     "createAccount": "创建账户",
     "verifyPhone": "验证手机号"
+    "privacyNote": "我们不会与任何人分享您的手机号码，仅用于会员积分系统。",
+    "learnData": "了解我们如何使用数据"
   },
   "tabs": {
     "home": "首页",

@@ -1,50 +1,48 @@
 import { useEffect, useMemo, useState } from "react";
-import { Alert, KeyboardAvoidingView } from "react-native";
+import { Alert, KeyboardAvoidingView, View, StyleSheet } from "react-native";
 import { useMutation } from "@apollo/client";
 import { router, useLocalSearchParams } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 import OneTimePasswordForm from "@/src/slices/auth/components/OneTimePasswordForm";
+import { LanguageSelector } from "@/src/components/LanguageSelector";
 import {
   LOGIN_MUTATION,
   REQUEST_CODE_MUTATION,
 } from "@/src/slices/auth/auth.gql";
 import { useSession } from "@/context/AuthContext";
+import { Colors } from "@/constants/Colors";
 
 type OneTimePasswordRouteParams = { phone?: string; resend?: string };
 
 export default function Index() {
   const params = useLocalSearchParams<OneTimePasswordRouteParams>();
+  const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const { signIn } = useSession();
   const [lastResentAt, setLastResentAt] = useState(0);
   const [canResendIn, setCanResendIn] = useState(60);
   const phone = useMemo(() => {
     const p = params.phone || "";
-    // Handle URL encoding - if phone starts with space (decoded from +), add + back
     if (p.startsWith(" ")) {
       return "+" + p.substring(1);
     }
-    // If it already has +, use as is
     if (p.startsWith("+")) {
       return p;
     }
-    // Otherwise add +
     return "+" + p;
   }, [params.phone]);
 
-  console.log("Phone from params:", params.phone);
-  console.log("Processed phone:", phone);
-
   const [loginMutation, { loading }] = useMutation(LOGIN_MUTATION, {
     onCompleted: (data) => {
-      console.log("Login completed:", data);
       if (data.login.accessToken) {
         signIn(data.login.accessToken as string);
         router.replace("/");
       }
     },
     onError: (error) => {
-      console.log("Login error:", error.message);
-      Alert.alert("Login Error", error.message);
+      Alert.alert(t('common.error'), error.message);
     },
   });
   
@@ -82,13 +80,17 @@ export default function Index() {
     <KeyboardAvoidingView
       style={{
         flex: 1,
+        backgroundColor: Colors.light.main,
       }}
       behavior="padding"
     >
+      <View style={[styles.languageContainer, { top: insets.top + 10 }]}>
+        <LanguageSelector />
+      </View>
       <OneTimePasswordForm
+        phone={phone}
         isLoading={loading || requestCodeLoading}
         onLogin={({ code }) => {
-          console.log("Logging in with phone:", phone, "code:", code);
           loginMutation({
             variables: { phone, code },
           });
@@ -105,3 +107,11 @@ export default function Index() {
     </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  languageContainer: {
+    position: 'absolute',
+    right: 16,
+    zIndex: 10,
+  },
+});

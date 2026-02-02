@@ -11,14 +11,11 @@ import { SteppeText } from "@/src/components/SteppeText";
 import { ExternalLink } from "@/src/components/ExternalLink";
 import { ZodType, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 
 type LoginFormFields = {
   phone: string;
 };
-
-const LoginFormSchema: ZodType<LoginFormFields> = z.object({
-  phone: z.string().min(16, "Enter your phone number"),
-});
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormFields) => void;
@@ -26,6 +23,12 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading }) => {
+  const { t } = useTranslation();
+
+  const LoginFormSchema: ZodType<LoginFormFields> = z.object({
+    phone: z.string().min(16, t('auth.enterPhone')),
+  });
+
   const {
     control,
     handleSubmit,
@@ -49,7 +52,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading }) => {
           source={require("@/assets/images/steppe-saigak-form.png")}
         />
         <SteppeText style={styles.title} variant="bold">
-          Login
+          {t('auth.login')}
         </SteppeText>
 
         <View style={{ marginBottom: 100 }}>
@@ -59,7 +62,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading }) => {
             rules={{ required: true }}
             render={({ field: { onChange, onBlur, value } }) => (
               <SteppeInput
-                label="Phone Number"
+                label={t('auth.phone')}
                 keyboardType="phone-pad"
                 placeholder="+7 (___) ___-__-__"
                 value={value}
@@ -73,31 +76,29 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading }) => {
           />
 
           <SteppeText style={styles.note}>
-            We will not share you phone with anyone else and it will be used for
-            reward system only.
+            {t('auth.privacyNote')}
           </SteppeText>
           <ExternalLink href="https://steppecoffee.kz/?page_id=159" asChild>
             <SteppeLink
               containerStyle={{ paddingVertical: 2 }}
-              title="Learn how we use the data"
+              title={t('auth.learnData')}
             />
           </ExternalLink>
         </View>
 
         <View style={styles.navigationButtonsContainer}>
           <SteppeButton
-            title="Login"
+            title={t('auth.login')}
             loading={isLoading}
             onPress={handleSubmit(onSubmit)}
           />
           <SteppeLink
-            title="I don't have an account"
+            title={t('auth.noAccount')}
             textStyle={{ textAlign: "center" }}
             onPress={() => router.push("/(app)/register")}
           />
-          />
           <SteppeLink
-            title="Back to menu"
+            title={t('common.back')}
             containerStyle={{ paddingVertical: 6 }}
             textStyle={{ textAlign: "center" }}
             onPress={() => router.replace("/(app)/(tabs)")}
@@ -150,7 +151,6 @@ const styles = StyleSheet.create({
     shadowColor: "black",
     shadowOpacity: 0.12,
     shadowRadius: 16,
-
     gap: 24,
   },
   formImage: {

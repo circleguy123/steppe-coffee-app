@@ -12,16 +12,12 @@ import { SteppeLogo } from "@/src/components/SteppeLogo";
 import { Colors } from "@/constants/Colors";
 import { ZodType, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 
 type RegisterFormFields = {
   name: string;
   phone: string;
 };
-
-const RegisterFormSchema: ZodType<RegisterFormFields> = z.object({
-  name: z.string().min(1, "Enter your name"),
-  phone: z.string().min(16, "Enter your phone number"),
-});
 
 export interface RegistrationFormProps {
   onSubmit: SubmitHandler<RegisterFormFields>;
@@ -34,6 +30,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   isLoading,
   defaultPhone = "",
 }) => {
+  const { t } = useTranslation();
+
+  const RegisterFormSchema: ZodType<RegisterFormFields> = z.object({
+    name: z.string().min(1, t('auth.enterName')),
+    phone: z.string().min(16, t('auth.enterPhone')),
+  });
+
   const {
     control,
     handleSubmit,
@@ -55,7 +58,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           style={styles.formImage}
           source={require("@/assets/images/steppe-saigak-form.png")}
         />
-        <SteppeText style={styles.title}>Register</SteppeText>
+        <SteppeText style={styles.title}>{t('auth.register')}</SteppeText>
         <View style={{ marginBottom: 50 }}>
           <Controller
             control={control}
@@ -63,9 +66,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             rules={{ required: true }}
             render={({ field: { onChange, onBlur, value } }) => (
               <SteppeInput
-                label="How should we call you?"
+                label={t('auth.name')}
                 autoComplete="name"
-                placeholder="Enter your name"
+                placeholder={t('auth.enterName')}
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -81,7 +84,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
             rules={{ required: true }}
             render={({ field: { onChange, onBlur, value } }) => (
               <SteppeInput
-                label="Phone Number"
+                label={t('auth.phone')}
                 keyboardType="phone-pad"
                 placeholder="+7 (___) ___-__-__"
                 value={value}
@@ -95,13 +98,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           />
 
           <SteppeText style={styles.note}>
-            We will not share you phone with anyone else and it will be used for
-            reward system only.
+            {t('auth.privacyNote') || "We will not share your phone with anyone else and it will be used for reward system only."}
           </SteppeText>
           <ExternalLink href="https://steppecoffee.kz/?page_id=159" asChild>
             <SteppeLink
               containerStyle={{ paddingVertical: 2 }}
-              title="Learn how we use the data"
+              title={t('auth.learnData') || "Learn how we use the data"}
             />
           </ExternalLink>
         </View>
@@ -109,18 +111,18 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
         <View style={styles.navigationButtonsContainer}>
           <SteppeButton
             loading={isLoading}
-            title="Register"
+            title={t('auth.register')}
             onPress={handleSubmit(onSubmit)}
           />
           <Link href="/login" asChild replace>
             <SteppeLink
-              title="I already have an account"
+              title={t('auth.haveAccount')}
               textStyle={{ textAlign: "center" }}
             />
           </Link>
           <Link href="/(app)/(tabs)" asChild replace>
             <SteppeLink
-              title="Back to menu"
+              title={t('common.back')}
               containerStyle={{ paddingVertical: 6 }}
               textStyle={{ textAlign: "center" }}
             />
@@ -163,7 +165,6 @@ const styles = StyleSheet.create({
     shadowColor: "black",
     shadowOpacity: 0.12,
     shadowRadius: 16,
-
     gap: 24,
   },
   formImage: {

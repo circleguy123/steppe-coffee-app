@@ -41,6 +41,8 @@
     "welcomeBack": "Welcome back",
     "createAccount": "Create account",
     "verifyPhone": "Verify your phone"
+    "privacyNote": "We will not share your phone with anyone else and it will be used for reward system only.",
+    "learnData": "Learn how we use the data"
   },
   "tabs": {
     "home": "Home",
