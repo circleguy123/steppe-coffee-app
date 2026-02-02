@@ -1,3 +1,4 @@
+import '@/src/i18n';
 import { Slot } from "expo-router";
 import { SessionProvider } from "@/context/AuthContext";
 import Toast from "react-native-toast-message";

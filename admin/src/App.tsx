@@ -1,9 +1,13 @@
+import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import Dashboard from './pages/Dashboard'
 import Events from './pages/Events'
 import Bookings from './pages/Bookings'
 import Communities from './pages/Communities'
 import Users from './pages/Users'
+import Baristas from './pages/Baristas'
+import Announcements from './pages/Announcements'
+import Login from './pages/Login'
 
 const navItems = [
   { path: '/', label: 'Dashboard' },
@@ -11,10 +15,27 @@ const navItems = [
   { path: '/bookings', label: 'Bookings' },
   { path: '/communities', label: 'Communities' },
   { path: '/users', label: 'Users' },
+  { path: '/baristas', label: 'Baristas' },
+  { path: '/announcements', label: 'Announcements' },
 ]
 
 function App() {
   const location = useLocation()
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  useEffect(() => {
+    const auth = localStorage.getItem('admin_auth')
+    setIsAuthenticated(auth === 'true')
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_auth')
+    setIsAuthenticated(false)
+  }
+
+  if (!isAuthenticated) {
+    return <Login onLogin={() => setIsAuthenticated(true)} />
+  }
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -42,8 +63,8 @@ function App() {
         </div>
 
         <div style={styles.sidebarFooter}>
-          <div style={{ fontSize: 12, color: '#666' }}>Steppe Coffee</div>
-          <div style={{ fontSize: 11, color: '#555' }}>Admin Panel v1.0</div>
+          <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
+          <div style={{ fontSize: 11, color: '#555', marginTop: 12 }}>Admin Panel v1.0</div>
         </div>
       </nav>
 
@@ -55,6 +76,8 @@ function App() {
           <Route path="/bookings" element={<Bookings />} />
           <Route path="/communities" element={<Communities />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/baristas" element={<Baristas />} />
+          <Route path="/announcements" element={<Announcements />} />
         </Routes>
       </main>
     </div>
@@ -108,6 +131,16 @@ const styles: { [key: string]: React.CSSProperties } = {
   sidebarFooter: {
     paddingTop: 20,
     borderTop: '1px solid #333',
+  },
+  logoutButton: {
+    width: '100%',
+    padding: 10,
+    backgroundColor: 'transparent',
+    border: '1px solid #444',
+    borderRadius: 6,
+    color: '#fff',
+    fontSize: 14,
+    cursor: 'pointer',
   },
   main: {
     flex: 1,

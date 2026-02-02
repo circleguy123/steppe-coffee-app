@@ -1,7 +1,7 @@
 import { SteppeInput } from "@/src/components/forms/SteppeInput";
 import { SteppeButton } from "@/src/components/SteppeButton";
 import { SteppeLink } from "@/src/components/SteppeLink";
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View, Image, StyleSheet } from "react-native";
@@ -90,19 +90,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, isLoading }) => {
             loading={isLoading}
             onPress={handleSubmit(onSubmit)}
           />
-          <Link href="/register" asChild replace>
-            <SteppeLink
-              title="I don't have an account"
-              textStyle={{ textAlign: "center" }}
-            />
-          </Link>
-          <Link href="/(app)/(tabs)" asChild replace>
-            <SteppeLink
-              title="Back to menu"
-              containerStyle={{ paddingVertical: 6 }}
-              textStyle={{ textAlign: "center" }}
-            />
-          </Link>
+          <SteppeLink
+            title="I don't have an account"
+            textStyle={{ textAlign: "center" }}
+            onPress={() => router.push("/(app)/register")}
+          />
+          />
+          <SteppeLink
+            title="Back to menu"
+            containerStyle={{ paddingVertical: 6 }}
+            textStyle={{ textAlign: "center" }}
+            onPress={() => router.replace("/(app)/(tabs)")}
+          />
         </View>
       </View>
     </View>

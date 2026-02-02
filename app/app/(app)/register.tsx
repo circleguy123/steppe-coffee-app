@@ -22,18 +22,26 @@ export default function Index() {
   const [registrationMutation, { loading }] = useMutation(
     REGISTRATION_MUTATION,
     {
-      onCompleted: (clientOptions) => {
-        router.replace(`/login-otp?phone=${clientOptions?.variables?.phone}`);
+      onCompleted: (data) => {
+        console.log("Registration completed:", data);
+        const registeredPhone = data?.registration?.phone || phone;
+        router.replace(`/login-otp?phone=${registeredPhone}`);
       },
-      onError: (error, clientOptions) => {
+      onError: (error) => {
+        console.log("Registration error:", error.message);
         if (error.message === "Телефон уже зарегестрирован") {
-          router.replace(
-            `/login-otp?phone=${clientOptions?.variables?.phone}&resend=true`
-          );
+          router.replace(`/login-otp?phone=${phone}&resend=true`);
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "Registration failed",
+            text2: error.message,
+          });
         }
       },
     }
   );
+
   return (
     <KeyboardAvoidingView
       style={{
@@ -45,6 +53,7 @@ export default function Index() {
         defaultPhone={phone}
         isLoading={loading}
         onSubmit={({ name, phone }) => {
+          console.log("Form submitted:", { name, phone });
           registrationMutation({
             variables: {
               phone,

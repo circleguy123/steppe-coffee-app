@@ -57,6 +57,7 @@ export default function RootLayout() {
               <Stack.Screen name="login" />
               <Stack.Screen name="register" />
               <Stack.Screen name="login-otp" />
+              <Stack.Screen name="barista" />
               <Stack.Screen
                 name="membership-payment-modal"
                 options={{
