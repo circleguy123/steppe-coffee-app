@@ -51,6 +51,12 @@ export class AdminService {
   }
 
   async createBarista(phone: string, name: string, password: string) {
+    console.log('createBarista called with:', { phone, name, password: password ? '***' : 'EMPTY' });
+  
+    if (!password) {
+        throw new Error('Password is required');
+    }
+    
     const hashedPassword = await bcrypt.hash(password, 10);
     return this.prisma.user.create({
       data: {
