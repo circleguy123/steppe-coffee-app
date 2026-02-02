@@ -92,6 +92,9 @@ class AdminBooking {
 
   @Field(() => AdminUser, { nullable: true })
   user?: AdminUser;
+
+  @Field({ nullable: true })
+  communityName?: string;
 }
 
 @ObjectType()
@@ -139,63 +142,6 @@ class Announcement {
   createdAt: Date;
 }
 
-@InputType()
-class CreateBaristaInput {
-  @Field()
-  phone: string;
-
-  @Field()
-  name: string;
-
-  @Field()
-  password: string;
-}
-
-@InputType()
-class CreateAnnouncementInput {
-  @Field()
-  title: string;
-
-  @Field()
-  message: string;
-
-  @Field({ nullable: true })
-  type?: string;
-
-  @Field({ nullable: true })
-  imageUrl?: string;
-
-  @Field({ nullable: true })
-  linkUrl?: string;
-
-  @Field({ nullable: true })
-  expiresAt?: Date;
-}
-
-@InputType()
-class UpdateAnnouncementInput {
-  @Field({ nullable: true })
-  title?: string;
-
-  @Field({ nullable: true })
-  message?: string;
-
-  @Field({ nullable: true })
-  type?: string;
-
-  @Field({ nullable: true })
-  imageUrl?: string;
-
-  @Field({ nullable: true })
-  linkUrl?: string;
-
-  @Field({ nullable: true })
-  isActive?: boolean;
-
-  @Field({ nullable: true })
-  expiresAt?: Date;
-}
-
 @Resolver()
 export class AdminResolver {
   constructor(private adminService: AdminService) {}
@@ -225,18 +171,74 @@ export class AdminResolver {
     return this.adminService.getBaristas();
   }
 
-  // Announcements - public query for app
   @Query(() => [Announcement], { name: 'announcements' })
   async getAnnouncements() {
     return this.adminService.getAnnouncements();
   }
 
-  // Announcements - admin query (includes inactive)
   @Query(() => [Announcement], { name: 'adminAnnouncements' })
   async getAdminAnnouncements() {
     return this.adminService.getAllAnnouncements();
   }
 
+  // Event mutations
+  @Mutation(() => AdminEvent, { name: 'createEvent' })
+  async createEvent(
+    @Args('title') title: string,
+    @Args('eventDate') eventDate: Date,
+    @Args('ticketsNumber', { type: () => Int }) ticketsNumber: number,
+    @Args('price', { type: () => Int }) price: number,
+    @Args('description', { nullable: true }) description?: string,
+    @Args('eventLength', { nullable: true }) eventLength?: string,
+    @Args('location', { nullable: true }) location?: string,
+  ) {
+    return this.adminService.createEvent({
+      title,
+      description,
+      eventDate,
+      eventLength,
+      ticketsNumber,
+      price,
+      location,
+    });
+  }
+
+  @Mutation(() => AdminEvent, { name: 'updateEvent' })
+  async updateEvent(
+    @Args('id') id: string,
+    @Args('title') title: string,
+    @Args('eventDate') eventDate: Date,
+    @Args('ticketsNumber', { type: () => Int }) ticketsNumber: number,
+    @Args('price', { type: () => Int }) price: number,
+    @Args('description', { nullable: true }) description?: string,
+    @Args('eventLength', { nullable: true }) eventLength?: string,
+    @Args('location', { nullable: true }) location?: string,
+  ) {
+    return this.adminService.updateEvent(id, {
+      title,
+      description,
+      eventDate,
+      eventLength,
+      ticketsNumber,
+      price,
+      location,
+    });
+  }
+
+  @Mutation(() => AdminEvent, { name: 'archiveEvent' })
+  async archiveEvent(
+    @Args('id') id: string,
+    @Args('isArchived') isArchived: boolean,
+  ) {
+    return this.adminService.archiveEvent(id, isArchived);
+  }
+
+  @Mutation(() => Boolean, { name: 'deleteEvent' })
+  async deleteEvent(@Args('id') id: string) {
+    return this.adminService.deleteEvent(id);
+  }
+
+  // Barista mutations
   @Mutation(() => AdminUser, { name: 'createBarista' })
   async createBarista(
     @Args('phone') phone: string,
@@ -259,22 +261,29 @@ export class AdminResolver {
     return this.adminService.baristaLogin(phone, password);
   }
 
+  // Announcement mutations
   @Mutation(() => Announcement, { name: 'createAnnouncement' })
-  async createAnnouncement(@Args('input') input: CreateAnnouncementInput) {
-    return this.adminService.createAnnouncement(
-      input.title,
-      input.message,
-      input.type || 'info',
-      input.expiresAt,
-    );
+  async createAnnouncement(
+    @Args('title') title: string,
+    @Args('message') message: string,
+    @Args('type', { nullable: true }) type?: string,
+    @Args('imageUrl', { nullable: true }) imageUrl?: string,
+    @Args('expiresAt', { nullable: true }) expiresAt?: Date,
+  ) {
+    return this.adminService.createAnnouncement(title, message, type || 'info', expiresAt);
   }
 
   @Mutation(() => Announcement, { name: 'updateAnnouncement' })
   async updateAnnouncement(
     @Args('id') id: string,
-    @Args('input') input: UpdateAnnouncementInput,
+    @Args('title', { nullable: true }) title?: string,
+    @Args('message', { nullable: true }) message?: string,
+    @Args('type', { nullable: true }) type?: string,
+    @Args('imageUrl', { nullable: true }) imageUrl?: string,
+    @Args('isActive', { nullable: true }) isActive?: boolean,
+    @Args('expiresAt', { nullable: true }) expiresAt?: Date,
   ) {
-    return this.adminService.updateAnnouncement(id, input);
+    return this.adminService.updateAnnouncement(id, { title, message, type, imageUrl, isActive, expiresAt });
   }
 
   @Mutation(() => Boolean, { name: 'deleteAnnouncement' })

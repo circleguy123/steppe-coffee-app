@@ -10,12 +10,72 @@ export class AdminService {
     private jwtService: JwtService,
   ) {}
 
+  // Events
   async getEvents() {
     return this.prisma.event.findMany({
       orderBy: { eventDate: 'desc' },
     });
   }
 
+  async createEvent(data: {
+    title: string;
+    description?: string;
+    eventDate: Date;
+    eventLength?: string;
+    ticketsNumber: number;
+    price: number;
+    location?: string;
+  }) {
+    return this.prisma.event.create({
+      data: {
+        title: data.title,
+        description: data.description,
+        eventDate: data.eventDate,
+        eventLength: data.eventLength,
+        ticketsNumber: data.ticketsNumber,
+        price: data.price,
+        location: data.location,
+        isArchived: false,
+      },
+    });
+  }
+
+  async updateEvent(id: string, data: {
+    title: string;
+    description?: string;
+    eventDate: Date;
+    eventLength?: string;
+    ticketsNumber: number;
+    price: number;
+    location?: string;
+  }) {
+    return this.prisma.event.update({
+      where: { id },
+      data: {
+        title: data.title,
+        description: data.description,
+        eventDate: data.eventDate,
+        eventLength: data.eventLength,
+        ticketsNumber: data.ticketsNumber,
+        price: data.price,
+        location: data.location,
+      },
+    });
+  }
+
+  async archiveEvent(id: string, isArchived: boolean) {
+    return this.prisma.event.update({
+      where: { id },
+      data: { isArchived },
+    });
+  }
+
+  async deleteEvent(id: string) {
+    await this.prisma.event.delete({ where: { id } });
+    return true;
+  }
+
+  // Communities
   async getCommunities() {
     return this.prisma.community.findMany({
       include: {
@@ -27,6 +87,7 @@ export class AdminService {
     });
   }
 
+  // Bookings
   async getBookings() {
     return this.prisma.tableBooking.findMany({
       include: {
@@ -37,12 +98,14 @@ export class AdminService {
     });
   }
 
+  // Users
   async getUsers() {
     return this.prisma.user.findMany({
       orderBy: { createdAt: 'desc' },
     });
   }
 
+  // Baristas
   async getBaristas() {
     return this.prisma.user.findMany({
       where: { role: 'barista' },
@@ -52,9 +115,9 @@ export class AdminService {
 
   async createBarista(phone: string, name: string, password: string) {
     console.log('createBarista called with:', { phone, name, password: password ? '***' : 'EMPTY' });
-  
+    
     if (!password) {
-        throw new Error('Password is required');
+      throw new Error('Password is required');
     }
     
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -101,6 +164,7 @@ export class AdminService {
     };
   }
 
+  // Dashboard stats
   async getDashboardStats() {
     const [eventsCount, communitiesCount, bookingsCount, usersCount] = await Promise.all([
       this.prisma.event.count(),
@@ -137,7 +201,7 @@ export class AdminService {
     });
   }
 
-  async updateAnnouncement(id: string, data: { title?: string; message?: string; type?: string; isActive?: boolean; expiresAt?: Date }) {
+  async updateAnnouncement(id: string, data: { title?: string; message?: string; type?: string; imageUrl?: string; isActive?: boolean; expiresAt?: Date }) {
     return this.prisma.announcement.update({
       where: { id },
       data,
