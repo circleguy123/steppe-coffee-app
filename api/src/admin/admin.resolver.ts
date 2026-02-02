@@ -238,8 +238,12 @@ export class AdminResolver {
   }
 
   @Mutation(() => AdminUser, { name: 'createBarista' })
-  async createBarista(@Args('input') input: CreateBaristaInput) {
-    return this.adminService.createBarista(input.phone, input.name, input.password);
+  async createBarista(
+    @Args('phone') phone: string,
+    @Args('name') name: string,
+    @Args('password') password: string,
+  ) {
+    return this.adminService.createBarista(phone, name, password);
   }
 
   @Mutation(() => Boolean, { name: 'deleteBarista' })
