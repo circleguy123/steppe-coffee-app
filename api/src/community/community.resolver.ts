@@ -126,6 +126,12 @@ export class CommunityResolver {
     return this.communityService.getMyBookings(req.user.id);
   }
 
+  @Query(() => [TableBooking], { name: 'communityBookings' })
+  @UseGuards(AuthGuard)
+  async communityBookings(@Args('communityId') communityId: string) {
+    return this.communityService.getCommunityBookings(communityId);
+  }
+
   @Query(() => [TableBooking], { name: 'eventBookings' })
   @UseGuards(AuthGuard)
   async eventBookings(@Args('eventId') eventId: string) {
@@ -137,6 +143,7 @@ export class CommunityResolver {
   async createTableBooking(
     @Context('req') req: { user: JwtPayload },
     @Args('eventId', { nullable: true }) eventId?: string,
+    @Args('communityId', { nullable: true }) communityId?: string,
     @Args('tableNumber', { nullable: true }) tableNumber?: string,
     @Args('date') date?: string,
     @Args('timeSlot', { nullable: true }) timeSlot?: string,
@@ -145,7 +152,31 @@ export class CommunityResolver {
   ) {
     return this.communityService.createTableBooking(req.user.id, {
       eventId,
+      communityId,
       tableNumber,
+      date: new Date(date),
+      timeSlot,
+      partySize,
+      notes,
+    });
+  }
+
+  @Mutation(() => [TableBooking], { name: 'createCommunityTableBooking' })
+  @UseGuards(AuthGuard)
+  async createCommunityTableBooking(
+    @Context('req') req: { user: JwtPayload },
+    @Args('communityId') communityId: string,
+    @Args('eventId', { nullable: true }) eventId?: string,
+    @Args('tableNumbers', { type: () => [String] }) tableNumbers?: string[],
+    @Args('date') date?: string,
+    @Args('timeSlot', { nullable: true }) timeSlot?: string,
+    @Args('partySize', { type: () => Int, nullable: true }) partySize?: number,
+    @Args('notes', { nullable: true }) notes?: string,
+  ) {
+    return this.communityService.createCommunityTableBooking(req.user.id, {
+      communityId,
+      eventId,
+      tableNumbers,
       date: new Date(date),
       timeSlot,
       partySize,

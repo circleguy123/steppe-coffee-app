@@ -158,6 +158,7 @@ export class CommunityService {
 
   async createTableBooking(userId: string, data: {
     eventId?: string;
+    communityId?: string;
     tableNumber?: string;
     date: Date;
     timeSlot?: string;
@@ -168,7 +169,7 @@ export class CommunityService {
       data: {
         userId,
         ...data,
-        status: 'pending',
+        status: 'confirmed',  // Auto-confirm bookings
       },
       include: {
         user: true,
@@ -177,11 +178,62 @@ export class CommunityService {
     });
   }
 
+  // Book multiple tables for a community
+  async createCommunityTableBooking(userId: string, data: {
+    communityId: string;
+    eventId?: string;
+    tableNumbers: string[];
+    date: Date;
+    timeSlot?: string;
+    partySize?: number;
+    notes?: string;
+  }) {
+    const community = await this.prisma.community.findUnique({
+      where: { id: data.communityId },
+      select: { name: true },
+    });
+
+    const bookings = await Promise.all(
+      data.tableNumbers.map((tableNumber) =>
+        this.prisma.tableBooking.create({
+          data: {
+            userId,
+            communityId: data.communityId,
+            eventId: data.eventId,
+            tableNumber,
+            date: data.date,
+            timeSlot: data.timeSlot,
+            partySize: data.partySize,
+            notes: data.notes ? `[${community?.name}] ${data.notes}` : `[${community?.name}]`,
+            status: 'confirmed',
+          },
+          include: {
+            user: true,
+            event: true,
+          },
+        })
+      )
+    );
+
+    return bookings;
+  }
+
   async getMyBookings(userId: string) {
     return this.prisma.tableBooking.findMany({
       where: { userId },
       include: {
         event: { include: { community: true } },
+      },
+      orderBy: { date: 'desc' },
+    });
+  }
+
+  async getCommunityBookings(communityId: string) {
+    return this.prisma.tableBooking.findMany({
+      where: { communityId },
+      include: {
+        user: true,
+        event: true,
       },
       orderBy: { date: 'desc' },
     });

@@ -231,6 +231,7 @@ model Community {
   createdBy   User              @relation(fields: [createdById], references: [id])
   members     CommunityMember[]
   events      CommunityEvent[]
+  tableBookings TableBooking[]
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 }
@@ -268,14 +269,16 @@ model TableBooking {
   id          String          @id @default(uuid())
   userId      String
   eventId     String?
+  communityId String?
   tableNumber String?
   date        DateTime
   timeSlot    String?
   partySize   Int             @default(1)
-  status      String          @default("pending")
+  status      String          @default("confirmed")
   notes       String?
   user        User            @relation(fields: [userId], references: [id])
   event       CommunityEvent? @relation(fields: [eventId], references: [id])
+  community   Community?      @relation(fields: [communityId], references: [id])
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 }
