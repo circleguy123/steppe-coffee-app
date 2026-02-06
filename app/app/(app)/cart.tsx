@@ -19,8 +19,10 @@ import { StyleSheet, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useAddCard } from "@/src/slices/profile/hooks/useAddCard";
 import Toast from "react-native-toast-message";
+import { useTranslation } from "react-i18next";
 
 export default function Cart() {
+  const { t } = useTranslation();
   const { order, clearOrder, total, cartItems } = useCartContext();
   const [open, setOpen] = useState(false);
   const [cardId, setCardId] = useState<string | null>(null);
@@ -32,8 +34,8 @@ export default function Cart() {
       onCompleted: (data) => {
         clearOrder();
         Toast.show({
-          text1: `Order #${data.createUserOrder.orderNumber} created`,
-          text2: "Ask barista for your order. Check your profile for details.",
+          text1: t('cart.orderCreated', { number: data.createUserOrder.orderNumber }),
+          text2: t('cart.orderCreatedMessage'),
           type: "success",
         });
       },
@@ -62,7 +64,7 @@ export default function Cart() {
     <View style={styles.container}>
       <View style={styles.itemsContainer}>
         <SteppeTitle style={{ fontSize: 32, padding: 16 }}>
-          Your order
+          {t('cart.yourOrder')}
         </SteppeTitle>
 
         <CartList cartItems={cartItems} />
@@ -71,7 +73,7 @@ export default function Cart() {
         {userCardsQuery.data &&
         userCardsQuery.data?.getUserCards.length === 0 ? (
           <SteppeLink
-            title="+ Add a card"
+            title={t('cart.addCard')}
             onPress={() => createAddCardOrderMutation()}
             containerStyle={{ paddingVertical: 15 }}
           />
@@ -89,7 +91,7 @@ export default function Cart() {
               })) ?? []
             }
             setValue={setCardId}
-            placeholder="Select a card"
+            placeholder={t('cart.selectCard')}
           />
         )}
 
@@ -101,14 +103,14 @@ export default function Cart() {
           }}
         >
           <View style={{ justifyContent: "center", flex: 1 / 2 }}>
-            <SteppeText>Total</SteppeText>
+            <SteppeText>{t('menu.total')}</SteppeText>
             <SteppeText style={{ fontSize: 24 }}>
               {formatNumber(total)} ₸
             </SteppeText>
           </View>
 
           <SteppeButton
-            title="Checkout"
+            title={t('menu.checkout')}
             buttonStyle={styles.buttonStyle}
             disabled={cardId === null}
             loading={createOrderState.loading}
@@ -135,7 +137,6 @@ const styles = StyleSheet.create({
   cartFooter: {
     padding: 24,
     gap: 16,
-
     backgroundColor: "#FFF",
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,

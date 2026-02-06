@@ -7,6 +7,7 @@ import { SteppeTitle } from "@/src/components/SteppeTitle";
 import { SteppeText } from "@/src/components/SteppeText";
 import { Colors } from "@/constants/Colors";
 import { gql } from "@apollo/client";
+import { useTranslation } from "react-i18next";
 
 const GET_EVENT_QUERY = gql`
   query Event($id: String!) {
@@ -41,6 +42,7 @@ const RSVP_MUTATION = gql`
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const { data, loading, refetch } = useQuery(GET_EVENT_QUERY, {
     variables: { id },
@@ -55,7 +57,7 @@ export default function EventDetailScreen() {
   if (loading) {
     return (
       <View style={styles.loading}>
-        <SteppeText>Loading...</SteppeText>
+        <SteppeText>{t('common.loading')}</SteppeText>
       </View>
     );
   }
@@ -63,7 +65,7 @@ export default function EventDetailScreen() {
   if (!event) {
     return (
       <View style={styles.loading}>
-        <SteppeText>Event not found</SteppeText>
+        <SteppeText>{t('events.notFound')}</SteppeText>
       </View>
     );
   }
@@ -118,7 +120,7 @@ export default function EventDetailScreen() {
             <View style={styles.metaRow}>
               <AntDesign name="team" size={20} color={Colors.green} />
               <SteppeText style={styles.metaText}>
-                {event.ticketsLeft ?? event.ticketsNumber} spots left
+                {t('events.spotsLeft', { count: event.ticketsLeft ?? event.ticketsNumber })}
               </SteppeText>
             </View>
           </View>
@@ -138,7 +140,7 @@ export default function EventDetailScreen() {
           {event.hasRegistered ? (
             <View style={styles.registeredBadge}>
               <AntDesign name="checkcircle" size={24} color={Colors.green} />
-              <SteppeText style={styles.registeredText}>You're registered!</SteppeText>
+              <SteppeText style={styles.registeredText}>{t('events.registered')}</SteppeText>
             </View>
           ) : (
             <TouchableOpacity
@@ -148,10 +150,10 @@ export default function EventDetailScreen() {
             >
               <SteppeText style={styles.rsvpButtonText}>
                 {rsvpLoading
-                  ? "Registering..."
+                  ? t('events.registering')
                   : event.ticketsLeft === 0
-                  ? "Sold Out"
-                  : "Register Now"}
+                  ? t('events.soldOut')
+                  : t('events.registerNow')}
               </SteppeText>
             </TouchableOpacity>
           )}
@@ -162,84 +164,19 @@ export default function EventDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: Colors.yellow,
-  },
-  header: {
-    padding: 16,
-    paddingTop: 60,
-  },
-  image: {
-    width: "100%",
-    height: 250,
-  },
-  placeholder: {
-    backgroundColor: "#F5F5F5",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  content: {
-    padding: 16,
-  },
-  meta: {
-    marginTop: 16,
-    gap: 12,
-  },
-  metaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  metaText: {
-    fontSize: 16,
-  },
-  priceTag: {
-    backgroundColor: Colors.green,
-    alignSelf: "flex-start",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginTop: 16,
-  },
-  priceText: {
-    color: "#FFF",
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  description: {
-    fontSize: 16,
-    color: "#666",
-    marginTop: 16,
-    lineHeight: 24,
-  },
-  rsvpButton: {
-    backgroundColor: Colors.green,
-    padding: 16,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 24,
-  },
-  rsvpButtonText: {
-    color: "#FFF",
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  registeredBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    backgroundColor: "#E8F5E9",
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 24,
-  },
-  registeredText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: Colors.green,
-  },
+  loading: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: Colors.yellow },
+  header: { padding: 16, paddingTop: 60 },
+  image: { width: "100%", height: 250 },
+  placeholder: { backgroundColor: "#F5F5F5", justifyContent: "center", alignItems: "center" },
+  content: { padding: 16 },
+  meta: { marginTop: 16, gap: 12 },
+  metaRow: { flexDirection: "row", alignItems: "center", gap: 12 },
+  metaText: { fontSize: 16 },
+  priceTag: { backgroundColor: Colors.green, alignSelf: "flex-start", paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, marginTop: 16 },
+  priceText: { color: "#FFF", fontSize: 18, fontWeight: "600" },
+  description: { fontSize: 16, color: "#666", marginTop: 16, lineHeight: 24 },
+  rsvpButton: { backgroundColor: Colors.green, padding: 16, borderRadius: 12, alignItems: "center", marginTop: 24 },
+  rsvpButtonText: { color: "#FFF", fontSize: 18, fontWeight: "600" },
+  registeredBadge: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "#E8F5E9", padding: 16, borderRadius: 12, marginTop: 24 },
+  registeredText: { fontSize: 18, fontWeight: "600", color: Colors.green },
 });

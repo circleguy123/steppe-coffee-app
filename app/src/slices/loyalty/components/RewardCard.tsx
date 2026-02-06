@@ -4,6 +4,8 @@ import { View, Pressable, GestureResponderEvent } from "react-native";
 import { SteppeTitle } from "@/src/components/SteppeTitle";
 import { UrlImage } from "@/src/components/UrlImage";
 import { ComponentProps } from "react";
+import { translateIiko } from "@/src/i18n/iikoTranslations";
+import { useTranslation } from "react-i18next";
 export interface RewardCardProps {
   title: string;
   image: ComponentProps<typeof UrlImage>["source"];
@@ -12,6 +14,7 @@ export interface RewardCardProps {
 }
 
 export function RewardCard({ title, points, onPress, image }: RewardCardProps) {
+  const { t } = useTranslation();
   return (
     <Pressable
       style={({ pressed }) => [
@@ -40,8 +43,8 @@ export function RewardCard({ title, points, onPress, image }: RewardCardProps) {
           padding: 8,
         }}
       >
-        <SteppeTitle>{title}</SteppeTitle>
-        <SteppeText style={{}}>{points} pts</SteppeText>
+        <SteppeTitle>{translateIiko(title)}</SteppeTitle>
+        <SteppeText style={{}}>{points} {t('loyalty.pts')}</SteppeText>
       </View>
     </Pressable>
   );

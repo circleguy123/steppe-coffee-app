@@ -1,22 +1,46 @@
 import { useState } from 'react'
+import { graphqlQuery } from '../graphql/client'
 
 interface LoginProps {
-  onLogin: () => void
+  onLogin: (role: string) => void
 }
 
 export default function Login({ onLogin }: LoginProps) {
+  const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Simple password check - in production use proper auth
-    if (password === 'steppe2026') {
-      localStorage.setItem('admin_auth', 'true')
-      onLogin()
-    } else {
-      setError('Incorrect password')
+    setError('')
+    setLoading(true)
+
+    try {
+      const res = await graphqlQuery(`
+        mutation AdminLogin($phone: String!, $password: String!) {
+          adminLogin(phone: $phone, password: $password) {
+            success
+            token
+            message
+            adminRole
+            user { id name phone }
+          }
+        }
+      `, { phone, password })
+
+      if (res.data?.adminLogin?.success) {
+        localStorage.setItem('admin_token', res.data.adminLogin.token)
+        localStorage.setItem('admin_role', res.data.adminLogin.adminRole)
+        localStorage.setItem('admin_user', JSON.stringify(res.data.adminLogin.user))
+        onLogin(res.data.adminLogin.adminRole)
+      } else {
+        setError(res.data?.adminLogin?.message || 'Login failed')
+      }
+    } catch (err) {
+      setError('Connection error')
     }
+    setLoading(false)
   }
 
   return (
@@ -29,14 +53,23 @@ export default function Login({ onLogin }: LoginProps) {
         
         <form onSubmit={handleSubmit}>
           <input
+            type="tel"
+            placeholder="Phone number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            style={styles.input}
+          />
+          <input
             type="password"
-            placeholder="Enter password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             style={styles.input}
           />
           {error && <p style={styles.error}>{error}</p>}
-          <button type="submit" style={styles.button}>Login</button>
+          <button type="submit" style={styles.button} disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
         </form>
       </div>
     </div>

@@ -6,7 +6,6 @@ import { ProfileLayout } from "@/src/slices/profile/components/ProfileLayout";
 import {
   RefreshControl,
   ScrollView,
-  Touchable,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -17,14 +16,16 @@ import { useCartContext } from "@/src/slices/cart/context/cart.context";
 import { formatNumber } from "@/src/utils/formatNumber";
 import { UrlImage } from "@/src/components/UrlImage";
 import { Colors } from "@/constants/Colors";
+import { useTranslation } from "react-i18next";
 
 export default function OrdersRoute() {
+  const { t } = useTranslation();
   const userOrdersQuery = useQuery<UserOrdersQuery>(GET_USER_ORDERS_QUERY);
   const { setMenu, order, addItem, total, cartItems } = useCartContext();
 
   return (
     <ProfileLayout>
-      <SteppeTitle style={{ fontSize: 32 }}>Your orders</SteppeTitle>
+      <SteppeTitle style={{ fontSize: 32 }}>{t('orders.title')}</SteppeTitle>
 
       <ScrollView
         style={{
@@ -72,7 +73,7 @@ export default function OrdersRoute() {
                 fontSize: 16,
               }}
             >
-              My cart
+              {t('orders.myCart')}
             </SteppeText>
             <SteppeText>{formatNumber(total)} ₸</SteppeText>
           </View>
@@ -136,7 +137,7 @@ export default function OrdersRoute() {
               <View style={{ gap: 4 }}>
                 <View style={{ flexDirection: "row", gap: 4 }}>
                   <SteppeText style={{ fontSize: 16 }} variant="bold">
-                    Order #: {order.orderNumber}
+                    {t('orders.orderNumber', { number: order.orderNumber })}
                   </SteppeText>
 
                   <SteppeText
@@ -147,14 +148,14 @@ export default function OrdersRoute() {
                   >
                     {order.paymentStatus === "paid"
                       ? order.iikoStatus === "created"
-                        ? "Created"
-                        : "NotCreated"
-                      : "Not paid"}
+                        ? t('orders.created')
+                        : t('orders.notCreated')
+                      : t('orders.notPaid')}
                   </SteppeText>
                 </View>
 
                 <SteppeText style={{ color: "#999999" }}>
-                  Total: {order.total}
+                  {t('menu.total')}: {order.total}
                 </SteppeText>
               </View>
             </View>

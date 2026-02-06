@@ -1,3 +1,4 @@
+import { translateIiko } from "@/src/i18n/iikoTranslations";
 import { forwardRef, useMemo } from "react";
 import {
   FlatList,

@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useQuery, gql } from "@apollo/client";
 import { format } from "date-fns";
+import { enUS, ru, zhCN } from "date-fns/locale";
 import { AntDesign } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { SteppeTitle } from "@/src/components/SteppeTitle";
@@ -20,6 +21,7 @@ const GET_TODAY_DATA = gql`
       partySize
       status
       notes
+      communityName
       user {
         id
         name
@@ -35,17 +37,48 @@ const GET_TODAY_DATA = gql`
       ticketsNumber
       price
     }
+    adminOrders {
+      id
+      orderNumber
+      total
+      iikoStatus
+      paymentStatus
+      type
+      createdAt
+      user {
+        id
+        name
+        phone
+      }
+      items {
+        id
+        productName
+        amount
+        price
+      }
+    }
   }
 `;
 
+const DATE_LOCALE_MAP: Record<string, any> = {
+  en: enUS,
+  ru: ru,
+  zh: zhCN,
+  kk: ru, // Fallback to Russian for Kazakh date formatting
+};
+
 export default function BaristaDashboard() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = DATE_LOCALE_MAP[i18n.language] || enUS;
+
   const [user, setUser] = useState<any>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
-  const { data, loading, refetch } = useQuery(GET_TODAY_DATA, {
+  const { data, loading, error, refetch } = useQuery(GET_TODAY_DATA, {
     fetchPolicy: "network-only",
+    pollInterval: 30000,
+    notifyOnNetworkStatusChange: false,
   });
 
   useEffect(() => {
@@ -72,34 +105,68 @@ export default function BaristaDashboard() {
   };
 
   const today = format(new Date(), "yyyy-MM-dd");
+  
   const todayBookings = (data?.adminBookings ?? []).filter(
     (b: any) => format(new Date(b.date), "yyyy-MM-dd") === today
   );
 
+  const weekFromNow = new Date();
+  weekFromNow.setDate(weekFromNow.getDate() + 7);
   const todayEvents = (data?.adminEvents ?? []).filter(
-    (e: any) => format(new Date(e.eventDate), "yyyy-MM-dd") === today
+    (e: any) => { const d = new Date(e.eventDate); return d >= new Date() && d <= weekFromNow; }
   );
 
   const upcomingEvents = (data?.adminEvents ?? [])
     .filter((e: any) => new Date(e.eventDate) >= new Date())
     .slice(0, 5);
 
+  const todayOrders = (data?.adminOrders ?? []).filter(
+    (o: any) => format(new Date(o.createdAt), "yyyy-MM-dd") === today
+  );
+
+  const pendingOrders = todayOrders.filter(
+    (o: any) => o.iikoStatus === "Pending" || o.iikoStatus === "pending"
+  );
+
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case "confirmed": return "#4CAF50";
       case "pending": return "#FF9800";
       case "cancelled": return "#f44336";
+      case "ready": return "#2196F3";
+      case "completed": return "#4CAF50";
+      default: return "#999";
+    }
+  };
+
+  const getPaymentStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "paid": return "#4CAF50";
+      case "pending": return "#FF9800";
+      case "failed": return "#f44336";
       default: return "#999";
     }
   };
 
   const showTableDetails = (booking: any, tableNum: number) => {
     if (booking) {
+      const communityInfo = booking.communityName ? `\n${t('barista.community')}: ${booking.communityName}` : '';
       Alert.alert(
         t('booking.tableNumber', { number: tableNum }),
-        `${t('booking.guestsCount', { count: booking.partySize })}\n${booking.user?.name || 'Guest'}\n${booking.user?.phone || 'N/A'}\n${t('booking.time')}: ${booking.timeSlot}${booking.notes ? `\n${t('booking.notes')}: ${booking.notes}` : ''}`
+        `${t('booking.guestsCount', { count: booking.partySize })}\n${booking.user?.name || t('common.guest')}\n${booking.user?.phone || t('barista.noPhone')}\n${t('booking.time')}: ${booking.timeSlot}${booking.notes ? `\n${t('booking.notes')}: ${booking.notes}` : ''}${communityInfo}`
       );
     }
+  };
+
+  const showOrderDetails = (order: any) => {
+    const itemsList = order.items.map((item: any) => 
+      `${item.amount}x ${item.productName || t('barista.item')} - ${item.price}₸`
+    ).join('\n');
+    
+    Alert.alert(
+      t('barista.orderNumber', { number: order.orderNumber }),
+      `${order.user?.name || t('common.guest')}\n${order.user?.phone || t('barista.noPhone')}\n\n${itemsList}\n\n${t('barista.total')}: ${order.total}₸\n${t('barista.payment')}: ${order.paymentStatus}\n${t('barista.status')}: ${order.iikoStatus}`
+    );
   };
 
   return (
@@ -107,8 +174,8 @@ export default function BaristaDashboard() {
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <SteppeText style={styles.greeting}>{t('barista.hello')}, {user?.name || "Barista"}</SteppeText>
-          <SteppeText style={styles.date}>{format(currentTime, "EEEE, d MMMM")}</SteppeText>
+          <SteppeText style={styles.greeting}>{t('barista.hello')}, {user?.name || t('common.guest')}</SteppeText>
+          <SteppeText style={styles.date}>{format(currentTime, "EEEE, d MMMM", { locale: dateFnsLocale })}</SteppeText>
         </View>
         <View style={styles.headerRight}>
           <SteppeText style={styles.clock}>{format(currentTime, "HH:mm")}</SteppeText>
@@ -122,7 +189,7 @@ export default function BaristaDashboard() {
         style={styles.content}
         refreshControl={
           <RefreshControl 
-            refreshing={refreshing || loading} 
+            refreshing={false} 
             onRefresh={onRefresh}
             colors={[Colors.yellow]}
             tintColor={Colors.yellow}
@@ -136,10 +203,63 @@ export default function BaristaDashboard() {
             <SteppeText style={styles.statLabel}>{t('barista.bookingsToday')}</SteppeText>
           </View>
           <View style={styles.statCard}>
+            <SteppeText style={[styles.statNumber, pendingOrders.length > 0 && { color: '#FF9800' }]}>
+              {pendingOrders.length}
+            </SteppeText>
+            <SteppeText style={styles.statLabel}>{t('barista.pendingOrders')}</SteppeText>
+          </View>
+          <View style={styles.statCard}>
             <SteppeText style={styles.statNumber}>{todayEvents.length}</SteppeText>
-            <SteppeText style={styles.statLabel}>{t('barista.eventsToday')}</SteppeText>
+            <SteppeText style={styles.statLabel}>{t('barista.eventsThisWeek')}</SteppeText>
           </View>
         </View>
+
+        {/* Pre-orders Section */}
+        {todayOrders.length > 0 && (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <SteppeTitle style={styles.sectionTitle}>{t('barista.preOrders')}</SteppeTitle>
+              <View style={styles.orderBadge}>
+                <SteppeText style={styles.orderBadgeText}>{todayOrders.length}</SteppeText>
+              </View>
+            </View>
+            {todayOrders.map((order: any) => (
+              <TouchableOpacity 
+                key={order.id} 
+                style={styles.orderCard}
+                onPress={() => showOrderDetails(order)}
+              >
+                <View style={styles.orderHeader}>
+                  <View style={styles.orderNumberBox}>
+                    <SteppeText style={styles.orderNumber}>#{order.orderNumber}</SteppeText>
+                  </View>
+                  <View style={styles.orderBadges}>
+                    <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.iikoStatus) }]}>
+                      <SteppeText style={styles.statusText}>{order.iikoStatus}</SteppeText>
+                    </View>
+                    <View style={[styles.statusBadge, { backgroundColor: getPaymentStatusColor(order.paymentStatus) }]}>
+                      <SteppeText style={styles.statusText}>{order.paymentStatus}</SteppeText>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.orderDetails}>
+                  <SteppeText style={styles.orderCustomer}>
+                    {order.user?.name || t('common.guest')} • {order.user?.phone || t('barista.noPhone')}
+                  </SteppeText>
+                  <SteppeText style={styles.orderItems}>
+                    {order.items.map((item: any) => `${item.amount}x ${item.productName || t('barista.item')}`).join(', ')}
+                  </SteppeText>
+                  <View style={styles.orderFooter}>
+                    <SteppeText style={styles.orderTotal}>{order.total}₸</SteppeText>
+                    <SteppeText style={styles.orderTime}>
+                      {format(new Date(order.createdAt), "HH:mm")}
+                    </SteppeText>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
 
         {/* Table Overview */}
         <View style={styles.section}>
@@ -149,12 +269,13 @@ export default function BaristaDashboard() {
               const booking = todayBookings.find(
                 (b: any) => b.tableNumber === String(table) && b.status !== "cancelled"
               );
+              const isCommunityBooking = booking?.communityName;
               return (
                 <TouchableOpacity
                   key={table}
                   style={[
                     styles.tableBox,
-                    { backgroundColor: booking ? Colors.yellow : "#E8F5E9" },
+                    { backgroundColor: booking ? (isCommunityBooking ? '#E3F2FD' : Colors.yellow) : "#E8F5E9" },
                   ]}
                   onPress={() => showTableDetails(booking, table)}
                 >
@@ -162,6 +283,9 @@ export default function BaristaDashboard() {
                   <SteppeText style={styles.tableStatus}>
                     {booking ? booking.timeSlot : t('barista.free')}
                   </SteppeText>
+                  {isCommunityBooking && (
+                    <AntDesign name="team" size={12} color="#1976D2" />
+                  )}
                 </TouchableOpacity>
               );
             })}
@@ -179,7 +303,15 @@ export default function BaristaDashboard() {
             todayBookings.map((booking: any) => (
               <View key={booking.id} style={styles.bookingCard}>
                 <View style={styles.bookingHeader}>
-                  <SteppeText style={styles.bookingTable}>{t('booking.tableNumber', { number: booking.tableNumber })}</SteppeText>
+                  <View style={styles.bookingTableInfo}>
+                    <SteppeText style={styles.bookingTable}>{t('booking.tableNumber', { number: booking.tableNumber })}</SteppeText>
+                    {booking.communityName && (
+                      <View style={styles.communityBadge}>
+                        <AntDesign name="team" size={12} color="#1976D2" />
+                        <SteppeText style={styles.communityText}>{booking.communityName}</SteppeText>
+                      </View>
+                    )}
+                  </View>
                   <View style={[styles.statusBadge, { backgroundColor: getStatusColor(booking.status) }]}>
                     <SteppeText style={styles.statusText}>{t(`booking.${booking.status}`)}</SteppeText>
                   </View>
@@ -189,9 +321,9 @@ export default function BaristaDashboard() {
                   <SteppeText style={styles.timeText}>{booking.timeSlot}</SteppeText>
                 </View>
                 <View style={styles.bookingDetails}>
-                  <SteppeText style={styles.guestName}>{booking.user?.name || "Guest"}</SteppeText>
+                  <SteppeText style={styles.guestName}>{booking.user?.name || t('common.guest')}</SteppeText>
                   <SteppeText style={styles.guestInfo}>
-                    {t('barista.guests', { count: booking.partySize })} • {booking.user?.phone || "No phone"}
+                    {t('barista.guests', { count: booking.partySize })} • {booking.user?.phone || t('barista.noPhone')}
                   </SteppeText>
                   {booking.notes && (
                     <SteppeText style={styles.notes}>{booking.notes}</SteppeText>
@@ -214,7 +346,7 @@ export default function BaristaDashboard() {
               <View key={event.id} style={styles.eventCard}>
                 <View style={styles.eventDateBadge}>
                   <SteppeText style={styles.eventDateText}>
-                    {format(new Date(event.eventDate), "MMM d")}
+                    {format(new Date(event.eventDate), "MMM d", { locale: dateFnsLocale })}
                   </SteppeText>
                 </View>
                 <View style={styles.eventInfo}>
@@ -288,7 +420,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     borderRadius: 12,
-    padding: 20,
+    padding: 16,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -298,22 +430,38 @@ const styles = StyleSheet.create({
   },
   statNumber: {
     color: Colors.yellow,
-    fontSize: 36,
+    fontSize: 28,
     fontWeight: "700",
   },
   statLabel: {
     color: "#666",
-    fontSize: 14,
+    fontSize: 12,
     marginTop: 4,
     textAlign: "center",
   },
   section: {
     marginBottom: 24,
   },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 12,
+  },
   sectionTitle: {
     color: "#333",
     fontSize: 18,
-    marginBottom: 12,
+  },
+  orderBadge: {
+    backgroundColor: "#FF9800",
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  orderBadgeText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "600",
   },
   tableGrid: {
     flexDirection: "row",
@@ -359,6 +507,67 @@ const styles = StyleSheet.create({
     color: "#999",
     fontSize: 16,
   },
+  orderCard: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+    borderLeftWidth: 4,
+    borderLeftColor: "#FF9800",
+  },
+  orderHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  orderNumberBox: {
+    backgroundColor: "#333",
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  orderNumber: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  orderBadges: {
+    flexDirection: "row",
+    gap: 6,
+  },
+  orderDetails: {
+    gap: 4,
+  },
+  orderCustomer: {
+    color: "#333",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  orderItems: {
+    color: "#666",
+    fontSize: 14,
+  },
+  orderFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 8,
+  },
+  orderTotal: {
+    color: "#333",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  orderTime: {
+    color: "#999",
+    fontSize: 14,
+  },
   bookingCard: {
     backgroundColor: "#fff",
     borderRadius: 12,
@@ -376,10 +585,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
+  bookingTableInfo: {
+    gap: 4,
+  },
   bookingTable: {
     color: "#333",
     fontSize: 18,
     fontWeight: "600",
+  },
+  communityBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#E3F2FD",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  communityText: {
+    color: "#1976D2",
+    fontSize: 12,
   },
   statusBadge: {
     paddingHorizontal: 10,

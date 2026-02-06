@@ -12,6 +12,8 @@ import { useCartContext } from "@/src/slices/cart/context/cart.context";
 import { router } from "expo-router";
 import { useMemo } from "react";
 import { View } from "react-native";
+import { useTranslation } from "react-i18next";
+import { translateIiko } from "@/src/i18n/iikoTranslations";
 
 export interface MenuItemCardProps {
   item: TransportItemDto;
@@ -32,6 +34,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
   amount,
 }) => {
   const { cartItems } = useCartContext();
+  const { t } = useTranslation();
 
   const hasVariations = useMemo(() => {
     return (
@@ -85,7 +88,6 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
           flex: 1 / 2,
         },
       ]}
-      // onPress={() => onPress(item.itemId, amount, itemSize.sizeId)}
     >
       <UrlImage
         source={itemSize.buttonImageUrl}
@@ -118,12 +120,12 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
               fontWeight: "bold",
             }}
           >
-            {item.name}
+            {translateIiko(item.name)}
           </SteppeTitle>
           <SteppeText style={{ fontSize: 12 }}>
             {itemSize.prices[0]?.price &&
               itemSize.prices[0]?.price > 0 &&
-              `${hasVariations ? "From " : ""}${formatNumber(
+              `${hasVariations ? t('menu.from') + " " : ""}${formatNumber(
                 itemSize.prices[0]?.price
               )} ₸`}
           </SteppeText>
@@ -150,8 +152,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
                   >
                     <View style={{ flex: 1 }}>
                       <SteppeText style={{ fontSize: 10, fontWeight: "600" }}>
-                        {cartItem.itemSize.sizeName ||
-                          cartItem.itemSize.sizeCode}
+                        {translateIiko(cartItem.itemSize.sizeName || cartItem.itemSize.sizeCode)}
                       </SteppeText>
                       {cartItem.modifiers && cartItem.modifiers.length > 0 && (
                         <View>
@@ -190,7 +191,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({
         {/* Add variation button or simple counter */}
         {hasVariations ? (
           <SteppeButton
-            title={itemCartItems.length > 0 ? "Add Another" : "Customize"}
+            title={itemCartItems.length > 0 ? t('menu.addAnother') : t('menu.customize')}
             onPress={handleAddVariation}
             buttonStyle={{
               paddingVertical: 6,

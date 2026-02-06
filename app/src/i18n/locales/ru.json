@@ -21,7 +21,8 @@
     "retry": "Повторить",
     "submit": "Отправить",
     "continue": "Продолжить",
-    "call": "Позвонить"
+    "call": "Позвонить",
+    "guest": "Гость"
   },
   "auth": {
     "login": "Войти",
@@ -40,7 +41,7 @@
     "enterName": "Введите ваше имя",
     "welcomeBack": "С возвращением",
     "createAccount": "Создать аккаунт",
-    "verifyPhone": "Подтвердите телефон"
+    "verifyPhone": "Подтвердите телефон",
     "privacyNote": "Мы не будем передавать ваш телефон третьим лицам. Он будет использоваться только для системы лояльности.",
     "learnData": "Узнайте, как мы используем данные"
   },
@@ -60,7 +61,7 @@
     "noAnnouncements": "Нет объявлений",
     "seeAll": "Смотреть все",
     "todayEvents": "Сегодняшние события",
-    "upcomingEvents": "Предстоящие события"
+    "upcomingEvents": "Предстоящие события",
     "guest": "Гость",
     "chooseReward": "ВЫБЕРИТЕ НАГРАДУ",
     "pointsMessage": "Посмотрите, сколько у вас баллов!"
@@ -78,7 +79,17 @@
     "emptyCart": "Корзина пуста",
     "total": "Итого",
     "checkout": "Оформить заказ",
-    "orderNow": "Заказать"
+    "orderNow": "Заказать",
+    "configureOrder": "Настройте ваш заказ",
+    "chooseSize": "Выберите размер",
+    "customizeOrder": "Добавки к заказу",
+    "completeSelection": "Завершите выбор",
+    "completeRequired": "Пожалуйста, выберите все обязательные опции",
+    "totalPrice": "Итого: {{price}} ₸",
+    "locationName": "Желтоқсан",
+    "from": "От",
+    "customize": "Настроить",
+    "addAnother": "Добавить ещё"
   },
   "communities": {
     "title": "Сообщества",
@@ -98,8 +109,23 @@
     "admin": "Админ",
     "settings": "Настройки",
     "invite": "Пригласить участников",
+    "inviteFriends": "Пригласить друзей",
+    "inviteCode": "Код приглашения",
+    "joinByCode": "Войти по коду приглашения",
+    "joinByCodeDescription": "Введите код приглашения, полученный от участника сообщества",
+    "enterCode": "напр. ABC123",
+    "joinCommunity": "Вступить в сообщество",
+    "joining": "Вступаем...",
+    "joinedSuccess": "Вы вступили в «{{name}}»",
+    "noInviteCode": "Нет кода приглашения",
+    "noInviteCodeMessage": "Попросите администратора сообщества создать код приглашения.",
+    "inviteMessage": "Присоединяйтесь к «{{name}}» в Steppe Coffee!\n\nКод приглашения: {{code}}",
+    "shareError": "Не удалось поделиться приглашением",
+    "invalidCode": "Сообщество с таким кодом не найдено.",
+    "alreadyMember": "Вы уже участник",
     "leaveConfirm": "Вы уверены, что хотите выйти из сообщества?",
-    "deleteConfirm": "Вы уверены, что хотите удалить сообщество?"
+    "deleteConfirm": "Вы уверены, что хотите удалить сообщество?",
+    "membersTitle": "Участники"
   },
   "booking": {
     "title": "Бронирование стола",
@@ -112,6 +138,7 @@
     "notes": "Примечания (необязательно)",
     "notesPlaceholder": "Есть особые пожелания?",
     "bookNow": "Забронировать",
+    "bookTables": "Забронировать столы",
     "success": "Бронирование подтверждено!",
     "myBookings": "Мои бронирования",
     "noBookings": "Нет бронирований",
@@ -121,6 +148,10 @@
     "cancelBooking": "Отменить бронирование",
     "cancelConfirm": "Вы уверены, что хотите отменить бронирование?",
     "bookingDetails": "Детали бронирования",
+    "bookings": "Бронирования",
+    "deleteBooking": "Удалить бронирование",
+    "deleteBookingConfirm": "Вы уверены, что хотите отменить стол(ы) {{tables}}?",
+    "bookingCancelled": "Бронирование отменено",
     "date": "Дата",
     "time": "Время",
     "status": "Статус",
@@ -135,10 +166,17 @@
     "notifications": "Уведомления",
     "staffLogin": "Вход для персонала",
     "deleteAccount": "Удалить аккаунт",
+    "deleteAccountTitle": "Удалить аккаунт",
     "deleteAccountConfirm": "Вы действительно хотите удалить аккаунт?",
     "deleteAccountMessage": "Ваши данные будут удалены, но вы всегда можете зарегистрироваться снова",
     "deleteAccountError": "Не удалось удалить аккаунт",
     "deleteAccountContact": "Свяжитесь с нами по номеру +7 701 522 2727 для удаления аккаунта",
+    "deleteAccountPermanent": "Это действие необратимо",
+    "deleteAccountWarning": "Все ваши данные, заказы, бронирования и членства в сообществах будут безвозвратно удалены. Это нельзя отменить.",
+    "deleteAccountTypeConfirm": "Введите DELETE для подтверждения",
+    "deleteAccountTypePlaceholder": "Введите DELETE",
+    "deleteAccountButton": "Безвозвратно удалить аккаунт",
+    "deleteAccountDeleting": "Удаление...",
     "loyalty": "Баллы лояльности",
     "points": "{{points}} баллов",
     "paymentMethods": "Способы оплаты",
@@ -168,7 +206,16 @@
     "staffLogin": "Вход для персонала",
     "password": "Пароль",
     "loginButton": "Войти",
-    "invalidCredentials": "Неверные данные"
+    "invalidCredentials": "Неверные данные",
+    "pendingOrders": "Ожидающие заказы",
+    "eventsThisWeek": "События на этой неделе",
+    "orderNumber": "Заказ #{{number}}",
+    "community": "Сообщество",
+    "noPhone": "Нет телефона",
+    "payment": "Оплата",
+    "status": "Статус",
+    "total": "Итого",
+    "item": "Товар"
   },
   "events": {
     "title": "События",
@@ -180,14 +227,19 @@
     "price": "{{price}} ₸",
     "buyTicket": "Купить билет",
     "booked": "Забронировано",
-    "soldOut": "Распродано",
+    "soldOut": "Мест нет",
     "eventDetails": "Детали события",
     "location": "Место",
     "dateTime": "Дата и время",
     "duration": "Продолжительность",
     "bookForCommunity": "Забронировать для сообщества",
     "noUpcoming": "Нет предстоящих событий",
-    "noPast": "Нет прошедших событий"
+    "noPast": "Нет прошедших событий",
+    "spotsLeft": "Осталось {{count}} мест",
+    "registered": "Вы зарегистрированы!",
+    "registerNow": "Зарегистрироваться",
+    "registering": "Регистрация...",
+    "notFound": "Событие не найдено"
   },
   "orders": {
     "title": "Заказы",
@@ -200,6 +252,58 @@
     "preparing": "Готовится",
     "ready": "Готов",
     "completed": "Выполнен",
-    "cancelled": "Отменён"
+    "cancelled": "Отменён",
+    "myCart": "Моя корзина",
+    "created": "Создан",
+    "notCreated": "Не создан",
+    "notPaid": "Не оплачен"
+  },
+  "loyalty": {
+    "pts": "баллов",
+    "becomeMember": "Стать участником"
+  },
+  "createEvent": {
+    "title": "Создать событие",
+    "eventTitle": "Название события",
+    "description": "Описание",
+    "descriptionPlaceholder": "О чём это событие?",
+    "location": "Место",
+    "selectDate": "Выберите дату",
+    "selectTime": "Выберите время",
+    "duration": "Продолжительность",
+    "maxAttendees": "Макс. участников",
+    "price": "Цена",
+    "priceFree": "0 (Бесплатно)",
+    "creating": "Создаём...",
+    "createButton": "Создать событие"
+  },
+  "bookTables": {
+    "title": "Забронировать столы",
+    "forCommunity": "Для {{name}}",
+    "selectDate": "Выберите дату",
+    "selectTime": "Выберите время",
+    "selectTables": "Выберите столы (выбрано {{count}})",
+    "tablesAvailable": "{{available}} из {{total}} столов свободно",
+    "table": "Стол {{number}}",
+    "booked": "Занято",
+    "attendees": "Ожидаемое количество",
+    "specialRequests": "Особые пожелания (необязательно)",
+    "specialRequestsPlaceholder": "Пожелания для встречи...",
+    "summary": "Итог бронирования",
+    "summaryTables": "{{count}} стол(ов) (Столы {{tables}})",
+    "summaryPeople": "{{count}} человек",
+    "booking": "Бронируем...",
+    "bookButton": "Забронировать {{count}} стол(ов)",
+    "confirmed": "Бронирование подтверждено!",
+    "confirmedMessage": "Стол(ы) {{tables}} забронированы на {{time}}",
+    "failed": "Ошибка бронирования",
+    "failedMessage": "Столы могут быть уже заняты на это время"
+  },
+  "cart": {
+    "yourOrder": "Ваш заказ",
+    "addCard": "+ Добавить карту",
+    "selectCard": "Выберите карту",
+    "orderCreated": "Заказ #{{number}} создан",
+    "orderCreatedMessage": "Покажите бариста ваш заказ. Детали в профиле."
   }
 }

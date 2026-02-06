@@ -36,6 +36,7 @@ export const GET_COMMUNITY_QUERY = gql`
       description
       imageUrl
       isPublic
+      inviteCode
       createdById
       createdAt
       members {
@@ -76,6 +77,7 @@ export const GET_MY_BOOKINGS_QUERY = gql`
     myBookings {
       id
       eventId
+      communityId
       tableNumber
       date
       timeSlot
@@ -86,6 +88,49 @@ export const GET_MY_BOOKINGS_QUERY = gql`
         id
         title
         location
+      }
+      community {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const GET_COMMUNITY_BOOKINGS_QUERY = gql`
+  query CommunityBookings($communityId: String!) {
+    communityBookings(communityId: $communityId) {
+      id
+      tableNumber
+      date
+      timeSlot
+      partySize
+      status
+      notes
+      user {
+        id
+        name
+        phone
+      }
+      event {
+        id
+        title
+      }
+    }
+  }
+`;
+
+export const GET_COMMUNITY_BY_INVITE_CODE_QUERY = gql`
+  query CommunityByInviteCode($inviteCode: String!) {
+    communityByInviteCode(inviteCode: $inviteCode) {
+      id
+      name
+      description
+      imageUrl
+      isPublic
+      members {
+        id
+        userId
       }
     }
   }
@@ -158,11 +203,73 @@ export const CREATE_TABLE_BOOKING_MUTATION = gql`
   }
 `;
 
+export const CREATE_COMMUNITY_TABLE_BOOKING_MUTATION = gql`
+  mutation CreateCommunityTableBooking(
+    $communityId: String!
+    $eventId: String
+    $tableNumbers: [String!]!
+    $date: String!
+    $timeSlot: String
+    $partySize: Int
+    $notes: String
+  ) {
+    createCommunityTableBooking(
+      communityId: $communityId
+      eventId: $eventId
+      tableNumbers: $tableNumbers
+      date: $date
+      timeSlot: $timeSlot
+      partySize: $partySize
+      notes: $notes
+    ) {
+      id
+      tableNumber
+      date
+      timeSlot
+      partySize
+      status
+      notes
+    }
+  }
+`;
+
 export const CANCEL_BOOKING_MUTATION = gql`
   mutation CancelBooking($id: String!) {
     cancelBooking(id: $id) {
       id
       status
+    }
+  }
+`;
+
+export const DELETE_BOOKING_MUTATION = gql`
+  mutation DeleteBooking($bookingId: String!) {
+    deleteBooking(bookingId: $bookingId) {
+      id
+    }
+  }
+`;
+
+export const GENERATE_INVITE_CODE_MUTATION = gql`
+  mutation GenerateInviteCode($communityId: String!) {
+    generateInviteCode(communityId: $communityId) {
+      id
+      inviteCode
+    }
+  }
+`;
+
+export const JOIN_BY_INVITE_CODE_MUTATION = gql`
+  mutation JoinByInviteCode($inviteCode: String!) {
+    joinByInviteCode(inviteCode: $inviteCode) {
+      id
+      communityId
+      userId
+      role
+      community {
+        id
+        name
+      }
     }
   }
 `;

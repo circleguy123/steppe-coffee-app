@@ -53,6 +53,12 @@ i18n.use(initReactI18next).init({
   },
 });
 
+// Clear broken auto-translate cache (one-time cleanup)
+AsyncStorage.getAllKeys().then(keys => {
+  const bad = keys.filter(k => k.startsWith('iiko_tr_'));
+  if (bad.length > 0) AsyncStorage.multiRemove(bad);
+});
+
 getStoredLanguage().then((lang) => {
   i18n.changeLanguage(lang);
 });

@@ -1,3 +1,4 @@
+import { translateIiko } from "@/src/i18n/iikoTranslations";
 import { Pressable, StyleSheet, View } from "react-native";
 import { TransportMenuCategoryDto } from "@/__generated__/graphql";
 import { SteppeText } from "@/src/components/SteppeText";
@@ -36,7 +37,7 @@ export const MenuCategoryButton: React.FC<MenuCategoryButtonProps> = ({
       onPress={() => onPress(category.id)}
     >
       <SteppeText style={isActive ? styles.textActive : styles.textInactive}>
-        {category.name}
+        {translateIiko(category.name)}
       </SteppeText>
     </Pressable>
   );

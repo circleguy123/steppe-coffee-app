@@ -1,9 +1,8 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context, Int } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { CommunityService } from './community.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { Community, CommunityMember, CommunityEvent, TableBooking } from './entities/community.entity';
-import { Context } from '@nestjs/graphql';
 import { JwtPayload } from '../auth/interfaces/jwt.payload';
 
 @Resolver()

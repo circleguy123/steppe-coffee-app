@@ -17,10 +17,12 @@ import { router } from "expo-router";
 import { useMenuFlatList } from "@/src/slices/menu/hooks/useMenuFlatList.hook";
 import { useCartContext } from "@/src/slices/cart/context/cart.context";
 import { useSession } from "@/context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function Index() {
   const { setMenu, order, addItem, total, cartItems } = useCartContext();
   const { session } = useSession();
+  const { t } = useTranslation();
   const menuQuery = useQuery<{ steppeMenu: ExternalMenuPreset }>(
     STEPPE_MENU_QUERY,
     {
@@ -49,10 +51,10 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <SaigakHeader title="Zheltoqsan" animHeaderValue={scrollOffsetY}>
+      <SaigakHeader title={t('menu.locationName')} animHeaderValue={scrollOffsetY}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
           <AntDesign name="enviromento" color={Colors.green} size={20} />
-          <SteppeText style={{ fontSize: 16 }}>Zheltoqsan</SteppeText>
+          <SteppeText style={{ fontSize: 16 }}>{t('menu.locationName')}</SteppeText>
         </View>
       </SaigakHeader>
       <View style={{ flex: 1 }}>

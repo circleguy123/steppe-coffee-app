@@ -16,7 +16,45 @@ export class AdminService {
       orderBy: { eventDate: 'desc' },
     });
   }
+  async getOrders() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const orders = await this.prisma.userOrder.findMany({
+      where: {
+        createdAt: { gte: today },
+      },
+      include: {
+        user: true,
+        userOrderItem: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
 
+    return orders.map(order => ({
+      id: order.id,
+      orderNumber: order.orderNumber,
+      total: order.total,
+      iikoStatus: order.iikoStatus,
+      paymentStatus: order.paymentStatus,
+      type: order.type,
+      createdAt: order.createdAt,
+      user: order.user ? {
+        id: order.user.id,
+        name: order.user.name,
+        phone: order.user.phone,
+        role: order.user.role,
+      } : null,
+      items: order.userOrderItem.map(item => ({
+        id: item.id,
+        productId: item.productId,
+        productName: item.productName,
+        amount: item.amount,
+        price: item.price,
+      })),
+    }));
+  }
+  
   async createEvent(data: {
     title: string;
     description?: string;

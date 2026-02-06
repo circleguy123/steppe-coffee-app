@@ -21,7 +21,8 @@
     "retry": "重试",
     "submit": "提交",
     "continue": "继续",
-    "call": "拨打"
+    "call": "拨打",
+    "guest": "访客"
   },
   "auth": {
     "login": "登录",
@@ -40,7 +41,7 @@
     "enterName": "请输入姓名",
     "welcomeBack": "欢迎回来",
     "createAccount": "创建账户",
-    "verifyPhone": "验证手机号"
+    "verifyPhone": "验证手机号",
     "privacyNote": "我们不会与任何人分享您的手机号码，仅用于会员积分系统。",
     "learnData": "了解我们如何使用数据"
   },
@@ -60,7 +61,7 @@
     "noAnnouncements": "暂无公告",
     "seeAll": "查看全部",
     "todayEvents": "今日活动",
-    "upcomingEvents": "即将举行的活动"
+    "upcomingEvents": "即将举行的活动",
     "guest": "访客",
     "chooseReward": "选择您的奖励",
     "pointsMessage": "看看您有多少积分！"
@@ -78,7 +79,17 @@
     "emptyCart": "购物车为空",
     "total": "合计",
     "checkout": "结账",
-    "orderNow": "立即下单"
+    "orderNow": "立即下单",
+    "configureOrder": "配置您的订单",
+    "chooseSize": "选择大小",
+    "customizeOrder": "自定义订单",
+    "completeSelection": "完成选择",
+    "completeRequired": "请完成所有必选项",
+    "totalPrice": "合计: {{price}} ₸",
+    "locationName": "Желтоқсан",
+    "from": "起",
+    "customize": "自定义",
+    "addAnother": "再加一个"
   },
   "communities": {
     "title": "社群",
@@ -98,8 +109,23 @@
     "admin": "管理员",
     "settings": "设置",
     "invite": "邀请成员",
+    "inviteFriends": "邀请朋友",
+    "inviteCode": "邀请码",
+    "joinByCode": "通过邀请码加入",
+    "joinByCodeDescription": "输入社群成员分享的邀请码",
+    "enterCode": "例如 ABC123",
+    "joinCommunity": "加入社群",
+    "joining": "加入中...",
+    "joinedSuccess": "您已加入「{{name}}」",
+    "noInviteCode": "没有邀请码",
+    "noInviteCodeMessage": "请社群管理员生成邀请码。",
+    "inviteMessage": "加入 Steppe Coffee 的「{{name}}」社群！\n\n邀请码：{{code}}",
+    "shareError": "分享邀请失败",
+    "invalidCode": "未找到使用此邀请码的社群。",
+    "alreadyMember": "您已是成员",
     "leaveConfirm": "确定要退出这个社群吗？",
-    "deleteConfirm": "确定要删除这个社群吗？"
+    "deleteConfirm": "确定要删除这个社群吗？",
+    "membersTitle": "成员"
   },
   "booking": {
     "title": "预订桌位",
@@ -107,11 +133,12 @@
     "selectTime": "选择时间",
     "guests": "人数",
     "guestsCount": "{{count}} 位客人",
-    "table": "桌号",
+    "table": "桌位",
     "tableNumber": "{{number}}号桌",
     "notes": "备注（选填）",
     "notesPlaceholder": "有什么特殊要求吗？",
     "bookNow": "立即预订",
+    "bookTables": "预订桌位",
     "success": "预订成功！",
     "myBookings": "我的预订",
     "noBookings": "暂无预订",
@@ -121,6 +148,10 @@
     "cancelBooking": "取消预订",
     "cancelConfirm": "确定要取消这个预订吗？",
     "bookingDetails": "预订详情",
+    "bookings": "预订",
+    "deleteBooking": "删除预订",
+    "deleteBookingConfirm": "确定要取消桌位 {{tables}} 吗？",
+    "bookingCancelled": "预订已取消",
     "date": "日期",
     "time": "时间",
     "status": "状态",
@@ -135,10 +166,17 @@
     "notifications": "通知",
     "staffLogin": "员工登录",
     "deleteAccount": "删除账户",
+    "deleteAccountTitle": "删除账户",
     "deleteAccountConfirm": "确定要删除账户吗？",
     "deleteAccountMessage": "您的数据将被删除，但您随时可以重新注册",
     "deleteAccountError": "无法删除账户",
     "deleteAccountContact": "请联系 +7 701 522 2727 删除账户",
+    "deleteAccountPermanent": "此操作不可逆",
+    "deleteAccountWarning": "您的所有数据、订单、预订和社群成员资格将被永久删除，无法撤销。",
+    "deleteAccountTypeConfirm": "输入 DELETE 以确认",
+    "deleteAccountTypePlaceholder": "输入 DELETE",
+    "deleteAccountButton": "永久删除账户",
+    "deleteAccountDeleting": "删除中...",
     "loyalty": "积分",
     "points": "{{points}} 积分",
     "paymentMethods": "支付方式",
@@ -168,7 +206,16 @@
     "staffLogin": "员工登录",
     "password": "密码",
     "loginButton": "登录",
-    "invalidCredentials": "凭据无效"
+    "invalidCredentials": "凭据无效",
+    "pendingOrders": "待处理订单",
+    "eventsThisWeek": "本周活动",
+    "orderNumber": "订单 #{{number}}",
+    "community": "社群",
+    "noPhone": "无电话",
+    "payment": "支付",
+    "status": "状态",
+    "total": "合计",
+    "item": "商品"
   },
   "events": {
     "title": "活动",
@@ -187,7 +234,12 @@
     "duration": "时长",
     "bookForCommunity": "为社群预订",
     "noUpcoming": "暂无即将举行的活动",
-    "noPast": "暂无已结束的活动"
+    "noPast": "暂无已结束的活动",
+    "spotsLeft": "剩余 {{count}} 个名额",
+    "registered": "您已报名！",
+    "registerNow": "立即报名",
+    "registering": "报名中...",
+    "notFound": "未找到活动"
   },
   "orders": {
     "title": "订单",
@@ -200,6 +252,58 @@
     "preparing": "准备中",
     "ready": "已准备好",
     "completed": "已完成",
-    "cancelled": "已取消"
+    "cancelled": "已取消",
+    "myCart": "我的购物车",
+    "created": "已创建",
+    "notCreated": "未创建",
+    "notPaid": "未支付"
+  },
+  "loyalty": {
+    "pts": "积分",
+    "becomeMember": "成为会员"
+  },
+  "createEvent": {
+    "title": "创建活动",
+    "eventTitle": "活动标题",
+    "description": "描述",
+    "descriptionPlaceholder": "这个活动是关于什么的？",
+    "location": "地点",
+    "selectDate": "选择日期",
+    "selectTime": "选择时间",
+    "duration": "时长",
+    "maxAttendees": "最大人数",
+    "price": "价格",
+    "priceFree": "0（免费）",
+    "creating": "创建中...",
+    "createButton": "创建活动"
+  },
+  "bookTables": {
+    "title": "预订桌位",
+    "forCommunity": "为 {{name}}",
+    "selectDate": "选择日期",
+    "selectTime": "选择时间",
+    "selectTables": "选择桌位（已选 {{count}} 张）",
+    "tablesAvailable": "{{total}} 张桌位中有 {{available}} 张可用",
+    "table": "{{number}} 号桌",
+    "booked": "已预订",
+    "attendees": "预计人数",
+    "specialRequests": "特殊要求（选填）",
+    "specialRequestsPlaceholder": "社群聚会有什么特殊要求...",
+    "summary": "预订摘要",
+    "summaryTables": "{{count}} 张桌（桌号 {{tables}}）",
+    "summaryPeople": "{{count}} 人",
+    "booking": "预订中...",
+    "bookButton": "预订 {{count}} 张桌",
+    "confirmed": "预订成功！",
+    "confirmedMessage": "桌位 {{tables}} 已预订，时间 {{time}}",
+    "failed": "预订失败",
+    "failedMessage": "该时段的桌位可能已被预订"
+  },
+  "cart": {
+    "yourOrder": "您的订单",
+    "addCard": "+ 添加卡片",
+    "selectCard": "选择卡片",
+    "orderCreated": "订单 #{{number}} 已创建",
+    "orderCreatedMessage": "请向咖啡师出示订单。详情请查看个人资料。"
   }
 }

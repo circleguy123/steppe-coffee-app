@@ -78,7 +78,7 @@ export default function Index() {
         <LoyaltyCard
           tier={hasMembership ? LoyaltyTiers.paid : LoyaltyTiers.free}
           cardNumber={loyaltyQuery.data?.loyaltyUser?.cards[0]?.number}
-          name={profileQuery.data?.profile?.name ?? t('home.guest') || "Guest"}
+          name={(profileQuery.data?.profile?.name ?? t('home.guest')) || "Guest"}
           cashback={5}
           points={
             loyaltyQuery.data?.loyaltyUser?.walletBalances[0].balance ?? 0

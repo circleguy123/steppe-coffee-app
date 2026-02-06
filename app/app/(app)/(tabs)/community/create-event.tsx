@@ -6,6 +6,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { SteppeTitle } from "@/src/components/SteppeTitle";
 import { SteppeText } from "@/src/components/SteppeText";
 import { Colors } from "@/constants/Colors";
+import { useTranslation } from "react-i18next";
 import { gql } from "@apollo/client";
 import { GET_COMMUNITY_EVENTS_QUERY } from "@/src/slices/community/community.gql";
 
@@ -40,6 +41,7 @@ export default function CreateCommunityEventScreen() {
   const router = useRouter();
   const { communityId } = useLocalSearchParams<{ communityId: string }>();
   
+  const { t } = useTranslation();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("Steppe Coffee Zheltoqsan");
@@ -107,7 +109,7 @@ export default function CreateCommunityEventScreen() {
         </SteppeTitle>
 
         <View style={styles.field}>
-          <SteppeText style={styles.label}>Event Title *</SteppeText>
+          <SteppeText style={styles.label}>{t("createEvent.eventTitle")} *</SteppeText>
           <TextInput
             style={styles.input}
             value={title}
@@ -118,12 +120,12 @@ export default function CreateCommunityEventScreen() {
         </View>
 
         <View style={styles.field}>
-          <SteppeText style={styles.label}>Description</SteppeText>
+          <SteppeText style={styles.label}>{t("createEvent.description")}</SteppeText>
           <TextInput
             style={[styles.input, styles.textArea]}
             value={description}
             onChangeText={setDescription}
-            placeholder="What's this event about?"
+            placeholder={t("createEvent.descriptionPlaceholder")}
             placeholderTextColor="#999"
             multiline
             numberOfLines={3}
@@ -131,7 +133,7 @@ export default function CreateCommunityEventScreen() {
         </View>
 
         <View style={styles.field}>
-          <SteppeText style={styles.label}>Location</SteppeText>
+          <SteppeText style={styles.label}>{t("createEvent.location")}</SteppeText>
           <TextInput
             style={styles.input}
             value={location}
@@ -142,7 +144,7 @@ export default function CreateCommunityEventScreen() {
         </View>
 
         {/* Date Selection */}
-        <SteppeText style={styles.label}>Select Date *</SteppeText>
+        <SteppeText style={styles.label}>{t("createEvent.selectDate")} *</SteppeText>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.dateRow}>
           {dates.map((date) => (
             <TouchableOpacity
@@ -170,7 +172,7 @@ export default function CreateCommunityEventScreen() {
         </ScrollView>
 
         {/* Time Selection */}
-        <SteppeText style={styles.label}>Select Time *</SteppeText>
+        <SteppeText style={styles.label}>{t("createEvent.selectTime")} *</SteppeText>
         <View style={styles.timeGrid}>
           {times.map((time) => (
             <TouchableOpacity
@@ -193,7 +195,7 @@ export default function CreateCommunityEventScreen() {
 
         <View style={styles.row}>
           <View style={[styles.field, { flex: 1 }]}>
-            <SteppeText style={styles.label}>Duration</SteppeText>
+            <SteppeText style={styles.label}>{t("createEvent.duration")}</SteppeText>
             <TextInput
               style={styles.input}
               value={eventLength}
@@ -203,7 +205,7 @@ export default function CreateCommunityEventScreen() {
             />
           </View>
           <View style={[styles.field, { flex: 1 }]}>
-            <SteppeText style={styles.label}>Max Attendees</SteppeText>
+            <SteppeText style={styles.label}>{t("createEvent.maxAttendees")}</SteppeText>
             <TextInput
               style={styles.input}
               value={maxAttendees}
@@ -216,13 +218,13 @@ export default function CreateCommunityEventScreen() {
         </View>
 
         <View style={styles.field}>
-          <SteppeText style={styles.label}>Price (₸)</SteppeText>
+          <SteppeText style={styles.label}>{t("createEvent.price")} (₸)</SteppeText>
           <TextInput
             style={styles.input}
             value={price}
             onChangeText={setPrice}
             keyboardType="number-pad"
-            placeholder="0 (Free)"
+            placeholder={t("createEvent.priceFree")}
             placeholderTextColor="#999"
           />
         </View>
@@ -233,7 +235,7 @@ export default function CreateCommunityEventScreen() {
           disabled={!title.trim() || loading}
         >
           <SteppeText style={styles.buttonText}>
-            {loading ? "Creating..." : "Create Event"}
+            {loading ? t("createEvent.creating") : t("createEvent.createButton")}
           </SteppeText>
         </TouchableOpacity>
       </ScrollView>

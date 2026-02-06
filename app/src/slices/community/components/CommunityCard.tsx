@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 12,
+    padding: 8,
     justifyContent: "center",
   },
   name: {

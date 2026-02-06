@@ -98,6 +98,54 @@ class AdminBooking {
 }
 
 @ObjectType()
+class AdminOrderItem {
+  @Field()
+  id: string;
+
+  @Field()
+  productId: string;
+
+  @Field({ nullable: true })
+  productName?: string;
+
+  @Field(() => Int)
+  amount: number;
+
+  @Field()
+  price: number;
+}
+
+@ObjectType()
+class AdminOrder {
+  @Field()
+  id: string;
+
+  @Field(() => Int)
+  orderNumber: number;
+
+  @Field(() => Int)
+  total: number;
+
+  @Field()
+  iikoStatus: string;
+
+  @Field()
+  paymentStatus: string;
+
+  @Field()
+  type: string;
+
+  @Field(() => AdminUser, { nullable: true })
+  user?: AdminUser;
+
+  @Field(() => [AdminOrderItem])
+  items: AdminOrderItem[];
+
+  @Field()
+  createdAt: Date;
+}
+
+@ObjectType()
 class BaristaLoginResult {
   @Field()
   success: boolean;
@@ -145,6 +193,11 @@ class Announcement {
 @Resolver()
 export class AdminResolver {
   constructor(private adminService: AdminService) {}
+
+  @Query(() => [AdminOrder], { name: 'adminOrders' })
+  async getAdminOrders() {
+    return this.adminService.getOrders();
+  }
 
   @Query(() => AdminStats, { name: 'adminStats' })
   async getAdminStats() {

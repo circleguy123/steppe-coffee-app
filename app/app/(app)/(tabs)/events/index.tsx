@@ -21,7 +21,7 @@ export default function EventListDisplay() {
       <SaigakHeader animHeaderValue={scrollOffsetY}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
           <AntDesign name="enviromento" color={Colors.green} size={20} />
-          <SteppeText style={{ fontSize: 16 }}>Zheltoqsan</SteppeText>
+          <SteppeText style={{ fontSize: 16 }}>{t('menu.locationName')}</SteppeText>
         </View>
       </SaigakHeader>
       <View style={{ flex: 1 }}>

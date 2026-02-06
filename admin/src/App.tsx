@@ -7,39 +7,70 @@ import Communities from './pages/Communities'
 import Users from './pages/Users'
 import Baristas from './pages/Baristas'
 import Announcements from './pages/Announcements'
+import Staff from './pages/Staff'
 import Login from './pages/Login'
+import Orders from './pages/Orders'
+import Menu from './pages/Menu'
+import Analytics from './pages/Analytics'
 
-const navItems = [
-  { path: '/', label: 'Dashboard' },
-  { path: '/events', label: 'Events' },
-  { path: '/bookings', label: 'Bookings' },
-  { path: '/communities', label: 'Communities' },
-  { path: '/users', label: 'Users' },
-  { path: '/baristas', label: 'Baristas' },
-  { path: '/announcements', label: 'Announcements' },
+const allNavItems = [
+  { path: '/', label: 'Dashboard', key: 'dashboard' },
+  { path: '/menu', label: 'Menu', key: 'menu' },
+  { path: '/orders', label: 'Orders', key: 'orders' },
+  { path: '/events', label: 'Events', key: 'events' },
+  { path: '/bookings', label: 'Bookings', key: 'bookings' },
+  { path: '/communities', label: 'Communities', key: 'communities' },
+  { path: '/users', label: 'Customers', key: 'users' },
+  { path: '/baristas', label: 'Baristas', key: 'baristas' },
+  { path: '/staff', label: 'Staff', key: 'staff' },
+  { path: '/announcements', label: 'Announcements', key: 'announcements' },
+  { path: '/analytics', label: 'Analytics', key: 'analytics' },
 ]
+
+const rolePermissions: Record<string, string[]> = {
+  super_admin: ['dashboard', 'menu', 'orders', 'events', 'bookings', 'communities', 'users', 'baristas', 'staff', 'announcements', 'analytics'],
+  manager: ['dashboard', 'menu', 'orders', 'events', 'bookings', 'communities', 'users', 'baristas', 'announcements', 'analytics'],
+  accountant: ['dashboard', 'menu', 'orders', 'users', 'analytics'],
+  marketer: ['dashboard', 'menu', 'events', 'users', 'announcements', 'analytics'],
+  chief_barista: ['dashboard', 'menu', 'events', 'analytics'],
+}
 
 function App() {
   const location = useLocation()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [adminRole, setAdminRole] = useState<string>('')
 
   useEffect(() => {
-    const auth = localStorage.getItem('admin_auth')
-    setIsAuthenticated(auth === 'true')
+    const token = localStorage.getItem('admin_token')
+    const role = localStorage.getItem('admin_role')
+    if (token && role) {
+      setIsAuthenticated(true)
+      setAdminRole(role)
+    }
   }, [])
 
+  const handleLogin = (role: string) => {
+    setIsAuthenticated(true)
+    setAdminRole(role)
+  }
+
   const handleLogout = () => {
-    localStorage.removeItem('admin_auth')
+    localStorage.removeItem('admin_token')
+    localStorage.removeItem('admin_role')
+    localStorage.removeItem('admin_user')
     setIsAuthenticated(false)
+    setAdminRole('')
   }
 
   if (!isAuthenticated) {
-    return <Login onLogin={() => setIsAuthenticated(true)} />
+    return <Login onLogin={handleLogin} />
   }
+
+  const allowedKeys = rolePermissions[adminRole] || []
+  const navItems = allNavItems.filter(item => allowedKeys.includes(item.key))
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* Sidebar */}
       <nav style={styles.sidebar}>
         <div style={styles.logo}>
           <div style={styles.logoIcon}>S</div>
@@ -63,12 +94,13 @@ function App() {
         </div>
 
         <div style={styles.sidebarFooter}>
+          <div style={{ fontSize: 12, color: '#888', marginBottom: 8 }}>
+            Role: {adminRole.replace('_', ' ').toUpperCase()}
+          </div>
           <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
-          <div style={{ fontSize: 11, color: '#555', marginTop: 12 }}>Admin Panel v1.0</div>
         </div>
       </nav>
 
-      {/* Main Content */}
       <main style={styles.main}>
         <Routes>
           <Route path="/" element={<Dashboard />} />
@@ -77,7 +109,11 @@ function App() {
           <Route path="/communities" element={<Communities />} />
           <Route path="/users" element={<Users />} />
           <Route path="/baristas" element={<Baristas />} />
+          <Route path="/staff" element={<Staff />} />
           <Route path="/announcements" element={<Announcements />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/analytics" element={<Analytics />} />
         </Routes>
       </main>
     </div>

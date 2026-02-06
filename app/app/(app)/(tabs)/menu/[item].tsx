@@ -6,6 +6,7 @@ import { useLocalSearchParams, router } from "expo-router";
 import { ItemSizeList } from "@/src/slices/menu/components/ItemSizeList";
 import { ItemModifierList } from "@/src/slices/menu/components/ItemModifierList";
 import { formatNumber } from "@/src/utils/formatNumber";
+import { useTranslation } from "react-i18next";
 
 import { View } from "react-native";
 import {
@@ -17,6 +18,7 @@ import { useState, useEffect, useMemo } from "react";
 export default function MenuItemOptionsModal() {
   const { item: itemId } = useLocalSearchParams<{ item: string }>();
   const { menu, addItem } = useCartContext();
+  const { t } = useTranslation();
   const [selectedSize, setSelectedSize] = useState<TransportItemSizeDto | null>(
     null
   );
@@ -127,7 +129,7 @@ export default function MenuItemOptionsModal() {
       }}
     >
       <SteppeTitle style={{ fontSize: 32, paddingHorizontal: 16 }}>
-        Configure your order
+        {t('menu.configureOrder')}
       </SteppeTitle>
       <View style={{ flex: 1 }}>
         {item && item.itemSizes.length > 0 && (
@@ -140,7 +142,7 @@ export default function MenuItemOptionsModal() {
                 paddingHorizontal: 16,
               }}
             >
-              Choose Size
+              {t('menu.chooseSize')}
             </SteppeText>
             <ItemSizeList
               itemSizes={item.itemSizes}
@@ -160,7 +162,7 @@ export default function MenuItemOptionsModal() {
                 paddingHorizontal: 16,
               }}
             >
-              Customize Your Order
+              {t('menu.customizeOrder')}
             </SteppeText>
             <ItemModifierList
               modifierGroups={selectedSize.itemModifierGroups}
@@ -185,7 +187,7 @@ export default function MenuItemOptionsModal() {
                 <SteppeText
                   style={{ marginBottom: 8, color: "#E53E3E", fontSize: 12 }}
                 >
-                  Please complete all required selections
+                  {t('menu.completeRequired')}
                 </SteppeText>
               )}
 
@@ -198,14 +200,14 @@ export default function MenuItemOptionsModal() {
               }}
             >
               <SteppeText style={{ fontSize: 18, fontWeight: "600" }}>
-                Total: {formatNumber(totalPrice)} ₸
+                {t('menu.totalPrice', { price: formatNumber(totalPrice) })}
               </SteppeText>
 
               <SteppeButton
                 title={
                   areRequiredModifiersComplete
-                    ? "Add to Cart"
-                    : "Complete Selection"
+                    ? t('menu.addToCart')
+                    : t('menu.completeSelection')
                 }
                 onPress={handleAddToCart}
                 buttonStyle={{
